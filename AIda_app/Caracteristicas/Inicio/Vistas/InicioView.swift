@@ -12,11 +12,11 @@ struct InicioView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 36) {
                         
-                        // ── 1. GIF DE AIDA + FRASE ──
-                        heroSection
-                        
-                        // ── 2. RACHA EN GRANDE ──
+                        // ── 1. RACHA EN GRANDE ──
                         rachaGigante
+                        
+                        // ── 2. GIF DE AIDA + FRASE ──
+                        heroSection
                         
                         // ── 3. ÁNIMO MINIMALISTA ──
                         seccionAnimo
@@ -85,7 +85,7 @@ struct InicioView: View {
                     .opacity(animarEntrada ? 1.0 : 0)
                 
                 // Frase motivacional
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(fraseDelDia)
                         .font(.system(size:20, weight: .medium, design: .serif))
                         .foregroundColor(.grisPizarra)
@@ -108,29 +108,29 @@ struct InicioView: View {
                 .opacity(animarEntrada ? 1.0 : 0)
                 .offset(y: animarEntrada ? 0 : 12)
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 5)
         }
     }
     
-    // MARK: - 2. Racha Gigante
+    // MARK: - 1. Racha Gigante
     private var rachaGigante: some View {
         VStack(spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text("\(GestorRacha.compartido.rachaActual)")
-                    .font(.system(size: 72, weight: .heavy, design: .rounded))
+                    .font(.system(size: 60, weight: .heavy, design: .rounded))
                     .foregroundColor(.grisPizarra)
                 
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 30))
+                    .font(.system(size: 28))
                     .foregroundColor(.orange)
-                    .offset(y: -8)
+                    .offset(y: -6)
             }
             .scaleEffect(animarEntrada ? 1.0 : 0.5)
             .opacity(animarEntrada ? 1.0 : 0)
-            .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: animarEntrada)
+            .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.2), value: animarEntrada)
             
             Text("días de racha")
-                .font(.system(size: 14, weight: .regular, design: .rounded))
+                .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundColor(.gray)
                 .tracking(2.5)
                 .textCase(.uppercase)
@@ -145,13 +145,24 @@ struct InicioView: View {
                     Text("Compartir")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                 }
-                .foregroundColor(.gray.opacity(0.7))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-                .background(Capsule().stroke(Color.gray.opacity(0.15), lineWidth: 1))
+                .foregroundColor(.gray.opacity(0.8))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
             }
-            .padding(.top, 6)
+            .padding(.top, 4)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color(white: 0.98)) // Blanco ligeramente grisáceo
+                .shadow(color: Color.black.opacity(0.02), radius: 10, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.gray.opacity(0.06), lineWidth: 1)
+        )
     }
     
     // MARK: - 3. Estado de Ánimo
