@@ -78,23 +78,10 @@ struct InicioView: View {
             .opacity(animarEntrada ? 1.0 : 0)
             
             VStack(spacing: 20) {
-                // GIF de AIda
-                GIFImageView(gifName: "AIDA_GIF")
-                    .frame(width: 140, height: 140)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(
-                                LinearGradient(
-                                    colors: [.coralEnergetico.opacity(0.3), .magentaProfundo.opacity(0.15), .clear],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 2
-                            )
-                    )
-                    .shadow(color: .coralEnergetico.opacity(0.12), radius: 20, x: 0, y: 10)
-                    .scaleEffect(animarEntrada ? 1.0 : 0.6)
+                // GIF de AIda corriendo
+                GIFImageView(gifName: "jaida_se_corre")
+                    .frame(width: 180, height: 180)
+                    .scaleEffect(animarEntrada ? 0.4 : 0.4)
                     .opacity(animarEntrada ? 1.0 : 0)
                 
                 // Frase motivacional
