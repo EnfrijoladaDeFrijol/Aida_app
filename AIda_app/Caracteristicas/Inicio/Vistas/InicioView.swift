@@ -21,9 +21,6 @@ struct InicioView: View {
                         // ── 3. RACHA EN GRANDE ──
                         rachaGigante
                         
-                        // ── 4. ÁNIMO MINIMALISTA ──
-                        seccionAnimo
-                        
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
@@ -165,151 +162,48 @@ struct InicioView: View {
         )
     }
     
-    // MARK: - 3. Estado de Ánimo
-    @ViewBuilder
-    private var seccionAnimo: some View {
-        if vm.animoDelDia == nil {
-            Button(action: { vm.abrirRegistroAnimo() }) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("¿Cómo te sientes?")
-                            .font(.system(size: 17, weight: .medium, design: .rounded))
-                            .foregroundColor(.grisPizarra)
-                        Text("Toca para registrar tu ánimo")
-                            .font(.system(size: 13, weight: .regular, design: .rounded))
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
-                    Circle()
-                        .stroke(Color.coralEnergetico.opacity(0.25), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-                        .frame(width: 44, height: 44)
-                        .overlay(
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 20))
-                                .foregroundColor(.coralEnergetico.opacity(0.5))
-                        )
-                }
-                .padding(4)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.035))
-                )
-            }
-            .buttonStyle(.plain)
-        } else {
-            let animo = vm.animoDelDia!
-            Button(action: { vm.mostrarRegistroAnimo = true }) {
-                HStack(spacing: 14) {
-                    Circle()
-                        .fill(animo.colorAsociado.opacity(0.1))
-                        .frame(width: 44, height: 44)
-                        .overlay(
-                            Image(systemName: animo.icono)
-                                .font(.system(size: 20))
-                                .foregroundColor(animo.colorAsociado)
-                        )
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Hoy te sientes")
-                            .font(.system(size: 13, weight: .regular, design: .rounded))
-                            .foregroundColor(.gray)
-                        Text(animo.rawValue)
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .foregroundColor(.grisPizarra)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.gray.opacity(0.3))
-                }
-                .padding(5)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.035))
-                )
-            }
-            .buttonStyle(.plain)
-        }
-    }
-    
-    // MARK: - 4. Accesos Rápidos Mejorados
+    // MARK: - 4. Accesos Rápidos (Rutinas, Dieta, Ánimo)
     private var accesosRapidos: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
+            // 1. MIS RUTINAS
             NavigationLink(destination: MisRutinasView()) {
-                VStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.coralEnergetico, .magentaProfundo],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 40, height: 40)
-                        
-                        Image(systemName: "dumbbell.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    
-                    Text("Mis Rutinas")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(.grisPizarra)
-                    
-                    Text("Guardadas")
-                        .font(.system(size: 10, weight: .regular, design: .rounded))
-                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.04))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(Color.gray.opacity(0.08), lineWidth: 1)
+                BotonAcceso(
+                    icono: "dumbbell.fill",
+                    titulo: "Mis Rutinas",
+                    subtitulo: "Guardadas",
+                    coloresGradiente: [.coralEnergetico, .magentaProfundo]
                 )
             }
             .buttonStyle(.plain)
             
+            // 2. MI DIETA
             NavigationLink(destination: MiDietaView()) {
-                VStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.greenMint, .green.opacity(0.7)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 40, height: 40)
-                        
-                        Image(systemName: "leaf.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    
-                    Text("Mi Dieta")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(.grisPizarra)
-                    
-                    Text("Plan alimenticio")
-                        .font(.system(size: 10, weight: .regular, design: .rounded))
-                        .foregroundColor(.gray)
+                BotonAcceso(
+                    icono: "leaf.fill",
+                    titulo: "Mi Dieta",
+                    subtitulo: "Plan actual",
+                    coloresGradiente: [.greenMint, .green.opacity(0.7)]
+                )
+            }
+            .buttonStyle(.plain)
+            
+            // 3. ÁNIMO
+            Button(action: { vm.mostrarRegistroAnimo = true }) {
+                if let animo = vm.animoDelDia {
+                    BotonAcceso(
+                        icono: animo.icono,
+                        titulo: "Ánimo",
+                        subtitulo: animo.rawValue,
+                        coloresGradiente: [animo.colorAsociado.opacity(0.8), animo.colorAsociado]
+                    )
+                } else {
+                    BotonAcceso(
+                        icono: "face.smiling",
+                        titulo: "Ánimo",
+                        subtitulo: "Regístralo",
+                        coloresGradiente: [.orange.opacity(0.6), .orange]
+                    )
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.04))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(Color.gray.opacity(0.08), lineWidth: 1)
-                )
             }
             .buttonStyle(.plain)
         }
@@ -331,22 +225,57 @@ struct InicioView: View {
     }
 }
 
-// MARK: - Componente legado preservado para compatibilidad
-struct MetricRingCard: View {
-    var title: String; var value: String; var subtitle: String; var icon: String; var progress: Double; var tintColor: Color
+// MARK: - Componentes Minimalistas
+
+struct BotonAcceso: View {
+    let icono: String
+    let titulo: String
+    let subtitulo: String
+    let coloresGradiente: [Color]
+    
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             ZStack {
-                Circle().stroke(tintColor.opacity(0.15), lineWidth: 8)
-                Circle().trim(from: 0, to: progress).stroke(tintColor, style: StrokeStyle(lineWidth: 8, lineCap: .round)).rotationEffect(.degrees(-90)).animation(.spring(response: 0.8, dampingFraction: 0.7), value: progress)
-                Image(systemName: icon).font(.title2).foregroundColor(tintColor)
-            }.frame(width: 65, height: 65)
-            VStack(spacing: 4) {
-                Text(value).font(.title3).fontWeight(.bold).foregroundColor(.grisPizarra)
-                Text(subtitle).font(.caption).foregroundColor(.gray)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: coloresGradiente,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 36, height: 36)
+                
+                Image(systemName: icono)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+            
+            VStack(spacing: 2) {
+                Text(titulo)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundColor(.grisPizarra)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                Text(subtitulo)
+                    .font(.system(size: 10, weight: .regular, design: .rounded))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
         }
-        .padding(.vertical, 20).frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 24, style: .continuous).fill(.ultraThinMaterial)).overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(Color.white.opacity(0.6), lineWidth: 1)).shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.gray.opacity(0.04))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.gray.opacity(0.08), lineWidth: 1)
+        )
     }
 }
 
