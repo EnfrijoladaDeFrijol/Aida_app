@@ -26,11 +26,11 @@ struct VistaRaiz: View {
                 .tabItem {
                     Label("Progreso", systemImage: "chart.bar.fill")
                 }
-            // 4. Perfil del Usuario
-                        Text("Aquí irá la vista de PerfilView")
-                            .tabItem {
-                                Label("Perfil", systemImage: "person.crop.circle.fill")
-                            }
+            // 5. Perfil del Usuario
+            PerfilView()
+                .tabItem {
+                    Label("Perfil", systemImage: "person.crop.circle.fill")
+                }
         }
         // Usamos el color de acento de tu Sistema de Diseño
         .tint(.aidaAcento)
