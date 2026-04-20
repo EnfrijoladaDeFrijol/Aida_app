@@ -15,8 +15,8 @@ struct VistaRaiz: View {
                     Label("Ánimo", systemImage: "heart.text.square.fill")
                 }
             
-            // 2. La Rutina: Agua y Ejercicio
-            Text("Aquí irá la vista de ResumenDiarioView")
+            // 3. La Rutina: Generada con IA
+            RutinaContenedorView()
                 .tabItem {
                     Label("Rutina", systemImage: "figure.run")
                 }
