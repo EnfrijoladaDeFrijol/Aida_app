@@ -14,55 +14,53 @@ struct EstadisticasView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     
-                    // --- SECCIÓN LIFESTYLE ---
+                    // --- SECCIÓN LIFESTYLE & RUNNING (Promedios Diarios) ---
                     HStack {
-                        Text("Actividad Diaria")
+                        Text("🔥 Promedios Diarios")
                             .font(.aidaSubtitulo)
                         Spacer()
                     }
                     
-                    TarjetaProgreso(
-                        titulo: "Pasos (Mensual)",
-                        valor: "\(viewModel.pasosActuales)",
-                        unidad: "pasos",
-                        valorAnterior: Double(viewModel.pasosAnteriores),
-                        valorActual: Double(viewModel.pasosActuales)
-                    )
-                    
-                    VStack(alignment: .leading, spacing: 5) {
-                        TarjetaProgreso(
-                            titulo: "Calorías Activas",
-                            valor: String(format: "%.0f", viewModel.caloriasActivas),
-                            unidad: "kcal",
-                            valorAnterior: viewModel.caloriasAnteriores,
-                            valorActual: viewModel.caloriasActivas
+                    // Gráficos Circulares
+                    HStack(spacing: 15) {
+                        // Meta Pasos: 6000/día
+                        CirculoProgresoView(
+                            titulo: "👟 Pasos",
+                            valorMensual: Double(viewModel.pasosActuales),
+                            metaDiaria: 6000.0,
+                            unidad: "pasos"
                         )
-                        Text("Automático vía Apple Watch")
-                            .font(.aidaNota)
-                            .foregroundColor(.aidaTextoSecundario)
-                            .padding(.leading, 10)
+                        
+                        // Meta Calorías: 400/día
+                        CirculoProgresoView(
+                            titulo: "⚡️ Calorías",
+                            valorMensual: viewModel.caloriasActivas,
+                            metaDiaria: 400.0,
+                            unidad: "kcal"
+                        )
+                        
+                        // Meta Distancia: 3.0 km/día
+                        CirculoProgresoView(
+                            titulo: "📍 Distancia",
+                            valorMensual: viewModel.kilometrosActuales,
+                            metaDiaria: 3.0,
+                            unidad: "km"
+                        )
                     }
                     
-                    // --- SECCIÓN RUNNING ---
-                    HStack {
-                        Text("Running")
-                            .font(.aidaSubtitulo)
-                        Spacer()
-                    }
+                    Text("Automático vía Apple Health / Watch")
+                        .font(.aidaNota)
+                        .foregroundColor(.aidaTextoSecundario)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    TarjetaProgreso(
-                        titulo: "Distancia",
-                        valor: String(format: "%.1f", viewModel.kilometrosActuales),
-                        unidad: "km",
-                        valorAnterior: viewModel.kilometrosAnteriores,
-                        valorActual: viewModel.kilometrosActuales
-                    )
-                    
-                    // Gráfica de los últimos 3 meses
+                    // --- SECCIÓN RUNNING (Historial) ---
                     VStack(alignment: .leading) {
-                        Text("Historial de Running")
-                            .font(.aidaEtiqueta)
-                            .foregroundColor(.aidaTextoSecundario)
+                        HStack {
+                            Text("🏃‍♂️ Historial de Running")
+                                .font(.aidaSubtitulo)
+                                .foregroundColor(.aidaTextoPrincipal)
+                            Spacer()
+                        }
                         
                         Chart {
                             ForEach(viewModel.historialKms) { dato in
@@ -79,11 +77,12 @@ struct EstadisticasView: View {
                     .padding()
                     .background(Color.aidaSuperficie)
                     .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
                     
                     // --- SECCIÓN NATACIÓN ---
-                    VStack(alignment: .leading, spacing: 5) {
+                    VStack(alignment: .leading, spacing: 10) {
                         HStack {
-                            Text("Natación")
+                            Text("🏊‍♂️ Natación")
                                 .font(.aidaSubtitulo)
                             Spacer()
                         }
@@ -99,37 +98,41 @@ struct EstadisticasView: View {
                     }
                     
                     // --- SECCIÓN GIMNASIO ---
-                    HStack {
-                        Text("Gimnasio")
-                            .font(.aidaSubtitulo)
-                        Spacer()
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 15) {
                         HStack {
-                            Image(systemName: "dumbbell.fill")
-                                .foregroundColor(.aidaAcento)
-                            Text("PR del Mes")
-                                .font(.aidaCuerpoDestacado)
+                            Text("🏋️‍♂️ Gimnasio")
+                                .font(.aidaSubtitulo)
+                            Spacer()
                         }
                         
-                        Text(viewModel.ejercicioPR)
-                            .font(.aidaTitulo)
-                            .foregroundColor(.aidaAcento)
-                        
-                        Divider()
-                        
-                        HStack {
-                            Text("Tonelaje Total:")
-                                .font(.aidaCuerpo)
-                            Text("\(Int(viewModel.tonelajeTotal)) kg")
-                                .font(.aidaCuerpoDestacado)
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Image(systemName: "trophy.fill")
+                                    .foregroundColor(.aidaNaranja)
+                                Text("Récord Personal (PR)")
+                                    .font(.aidaCuerpoDestacado)
+                            }
+                            
+                            Text(viewModel.ejercicioPR)
+                                .font(.aidaTitulo)
                                 .foregroundColor(.aidaAcento)
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Tonelaje Acumulado:")
+                                    .font(.aidaCuerpo)
+                                Spacer()
+                                Text("\(Int(viewModel.tonelajeTotal)) kg")
+                                    .font(.aidaCuerpoDestacado)
+                                    .foregroundColor(.aidaAcento)
+                            }
                         }
+                        .padding()
+                        .background(Color.aidaSuperficie)
+                        .cornerRadius(16)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
                     }
-                    .padding()
-                    .background(Color.aidaSuperficie)
-                    .cornerRadius(16)
                     
                 }
                 .padding()
@@ -243,6 +246,61 @@ struct TarjetaMini: View {
         .padding()
         .background(Color.aidaSuperficie)
         .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+}
+
+struct CirculoProgresoView: View {
+    var titulo: String
+    var valorMensual: Double
+    var metaDiaria: Double
+    var unidad: String
+    
+    var body: some View {
+        // Calcular promedio diario basado en los días transcurridos del mes
+        let diasTranscurridos = max(1, Calendar.current.component(.day, from: Date()))
+        let promedioDiario = valorMensual / Double(diasTranscurridos)
+        let progreso = min(1.0, promedioDiario / metaDiaria)
+        let completado = progreso >= 1.0
+        let colorActual = completado ? Color.aidaVerde : Color.aidaAcento
+        
+        VStack {
+            ZStack {
+                // Fondo del círculo
+                Circle()
+                    .stroke(colorActual.opacity(0.2), lineWidth: 10)
+                
+                // Progreso
+                Circle()
+                    .trim(from: 0.0, to: CGFloat(progreso))
+                    .stroke(colorActual, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 1.0), value: progreso)
+                
+                // Texto en el centro
+                VStack(spacing: 2) {
+                    Text(String(format: promedioDiario > 100 ? "%.0f" : "%.1f", promedioDiario))
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundColor(colorActual)
+                    Text(unidad)
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundColor(.aidaTextoSecundario)
+                }
+            }
+            .frame(width: 75, height: 75)
+            
+            Text(titulo)
+                .font(.aidaEtiqueta)
+                .foregroundColor(.aidaTextoPrincipal)
+                .padding(.top, 4)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 4)
+        .background(Color.aidaSuperficie)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 }
 
