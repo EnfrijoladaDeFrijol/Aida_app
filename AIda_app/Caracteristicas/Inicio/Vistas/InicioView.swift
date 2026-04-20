@@ -15,11 +15,11 @@ struct InicioView: View {
                         // ── 1. ACCESOS RÁPIDOS (ARRIBA) ──
                         accesosRapidos
                         
-                        // ── 2. RACHA EN GRANDE ──
-                        rachaGigante
-                        
-                        // ── 3. GIF DE AIDA + FRASE ──
+                        // ── 2. GIF DE AIDA + FRASE (EN MEDIO) ──
                         heroSection
+                        
+                        // ── 3. RACHA EN GRANDE ──
+                        rachaGigante
                         
                         // ── 4. ÁNIMO MINIMALISTA ──
                         seccionAnimo
