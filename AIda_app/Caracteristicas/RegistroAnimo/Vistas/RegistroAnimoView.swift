@@ -1,26 +1,15 @@
 import SwiftUI
 
-// MARK: - Extensiones de Color de Seguridad
-// Por si acaso no las tienes accesibles globalmente, esto asegura que compile.
-
-
 struct RegistroAnimoView: View {
     @Environment(\.dismiss) var dismiss
-    @AppStorage("animoDelDia") private var animoGuardado: String = ""
-    @State private var animoSeleccionado: TipoAnimo? = nil
+    @State private var vm = RegistroAnimoViewModel()
     
     var body: some View {
         ZStack {
             // Fondo Dinámico Premium
-            Group {
-                if let seleccionado = animoSeleccionado {
-                    seleccionado.colorAsociado.opacity(0.12)
-                } else {
-                    Color.rosaBruma.opacity(0.6)
-                }
-            }
-            .ignoresSafeArea()
-            .animation(.easeInOut(duration: 0.6), value: animoSeleccionado)
+            vm.colorFondoDinamico
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.6), value: vm.animoSeleccionado)
             
             VStack(spacing: 24) {
                 // --- CABECERA ELEGANTE ---
@@ -30,7 +19,7 @@ struct RegistroAnimoView: View {
                         .frame(width: 40, height: 5)
                         .padding(.top, 12)
                     
-                    Text(saludoSegunHora())
+                    Text(vm.saludo)
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(.gray)
@@ -45,18 +34,16 @@ struct RegistroAnimoView: View {
                 .padding(.horizontal)
                 
                 // --- LISTA VERTICAL PREMIUM ---
-                // Reemplazamos el Grid por un VStack para evitar el "hueco" del 5to elemento
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
                         ForEach(TipoAnimo.allCases) { animo in
                             TarjetaAnimoPremium(
                                 animo: animo,
-                                estaSeleccionado: animoSeleccionado == animo,
+                                estaSeleccionado: vm.animoSeleccionado == animo,
                                 accion: {
                                     withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                                        animoSeleccionado = animo
+                                        vm.seleccionarAnimo(animo)
                                     }
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                 }
                             )
                         }
@@ -67,47 +54,31 @@ struct RegistroAnimoView: View {
                 
                 // --- BOTÓN DE GUARDAR FLOTANTE ---
                 Button(action: {
-                    guard let animo = animoSeleccionado else { return }
-                    UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-                    animoGuardado = animo.rawValue
-                    dismiss()
+                    if vm.guardarAnimo() {
+                        dismiss()
+                    }
                 }) {
-                    Text(animoSeleccionado == nil ? "Selecciona tu estado" : "Guardar mi ánimo")
+                    Text(vm.textoBoton)
                         .font(.headline)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .padding(.vertical, 18)
                         .frame(maxWidth: .infinity)
-                        .background(
-                            animoSeleccionado == nil
-                            ? Color.gray.opacity(0.3)
-                            : animoSeleccionado!.colorAsociado
-                        )
+                        .background(vm.colorBoton)
                         .clipShape(Capsule())
                         .shadow(
-                            color: animoSeleccionado?.colorAsociado.opacity(0.4) ?? .clear,
+                            color: vm.colorSombraBoton,
                             radius: 12, x: 0, y: 6
                         )
                 }
-                .disabled(animoSeleccionado == nil)
+                .disabled(!vm.puedeGuardar)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 30)
-                .animation(.spring(), value: animoSeleccionado)
+                .animation(.spring(), value: vm.animoSeleccionado)
             }
         }
         .onAppear {
-            if let guardado = TipoAnimo(rawValue: animoGuardado) {
-                animoSeleccionado = guardado
-            }
-        }
-    }
-    
-    private func saludoSegunHora() -> String {
-        let hora = Calendar.current.component(.hour, from: Date())
-        switch hora {
-        case 6..<12: return "¡Buenos días!"
-        case 12..<19: return "¡Buenas tardes!"
-        default: return "¡Buenas noches!"
+            vm.cargarAnimoGuardado()
         }
     }
 }
