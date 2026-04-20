@@ -148,7 +148,9 @@ struct EstadisticasView: View {
                     }
                 }
             }
-            .sheet(isPresented: $mostrarRegistro) {
+            .sheet(isPresented: $mostrarRegistro, onDismiss: {
+                sincronizarSwiftData()
+            }) {
                 RegistroMetricasManualView()
             }
             .onChange(of: registros) { _, _ in

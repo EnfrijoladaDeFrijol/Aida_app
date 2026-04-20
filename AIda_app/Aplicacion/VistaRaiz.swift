@@ -13,12 +13,7 @@ struct VistaRaiz: View {
                         Label("Inicio", systemImage: "house.fill")
                     }
                 
-                // 2. Estado de Animo
-                RegistroAnimoView()
-                    .tabItem {
-                        Label("Ánimo", systemImage: "heart.text.square.fill")
-                    }
-                
+
                 // 3. La Rutina: Generada con IA
                 RutinaContenedorView()
                     .tabItem {
