@@ -7,14 +7,13 @@ struct InicioView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo limpio
                 Color.white.ignoresSafeArea()
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 40) {
+                    VStack(spacing: 36) {
                         
-                        // ── 1. FRASE CENTRADA CON EFECTO ──
-                        fraseHero
+                        // ── 1. GIF DE AIDA + FRASE ──
+                        heroSection
                         
                         // ── 2. RACHA EN GRANDE ──
                         rachaGigante
@@ -22,12 +21,12 @@ struct InicioView: View {
                         // ── 3. ÁNIMO MINIMALISTA ──
                         seccionAnimo
                         
-                        // ── 4. ACCESOS RÁPIDOS ──
+                        // ── 4. ACCESOS RÁPIDOS MEJORADOS ──
                         accesosRapidos
                         
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 20)
+                    .padding(.top, 12)
                     .padding(.bottom, 50)
                 }
             }
@@ -45,97 +44,104 @@ struct InicioView: View {
         }
     }
     
-    // MARK: - 1. Frase Hero
-    private var fraseHero: some View {
+    // MARK: - 1. Hero: GIF + Frase
+    private var heroSection: some View {
         ZStack {
-            // Efecto de fondo: círculos difuminados
+            // Efecto de fondo difuminado
             ZStack {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.coralEnergetico.opacity(0.08), .clear],
+                            colors: [.coralEnergetico.opacity(0.07), .clear],
                             center: .center,
                             startRadius: 20,
-                            endRadius: 140
+                            endRadius: 160
                         )
                     )
-                    .frame(width: 280, height: 280)
-                    .offset(x: -30, y: -10)
+                    .frame(width: 320, height: 320)
+                    .offset(x: -20, y: 0)
                 
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.magentaProfundo.opacity(0.06), .clear],
+                            colors: [.magentaProfundo.opacity(0.05), .clear],
                             center: .center,
                             startRadius: 10,
-                            endRadius: 120
+                            endRadius: 130
                         )
                     )
-                    .frame(width: 220, height: 220)
-                    .offset(x: 50, y: 30)
-                
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [.orange.opacity(0.05), .clear],
-                            center: .center,
-                            startRadius: 10,
-                            endRadius: 100
-                        )
-                    )
-                    .frame(width: 180, height: 180)
-                    .offset(x: -60, y: 50)
+                    .frame(width: 260, height: 260)
+                    .offset(x: 40, y: 30)
             }
-            .blur(radius: 20)
+            .blur(radius: 25)
             .scaleEffect(animarEntrada ? 1.0 : 0.8)
             .opacity(animarEntrada ? 1.0 : 0)
             
-            // Frase
-            VStack(spacing: 16) {
-                Text(fraseDelDia)
-                    .font(.system(size: 26, weight: .semibold, design: .serif))
-                    .foregroundColor(.grisPizarra)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(8)
-                    .fixedSize(horizontal: false, vertical: true)
-                
-                // Línea decorativa
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(
-                        LinearGradient(
-                            colors: [.clear, .coralEnergetico.opacity(0.4), .clear],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+            VStack(spacing: 20) {
+                // GIF de AIda
+                GIFImageView(gifName: "AIDA_GIF")
+                    .frame(width: 140, height: 140)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.coralEnergetico.opacity(0.3), .magentaProfundo.opacity(0.15), .clear],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
                     )
-                    .frame(width: 60, height: 2)
+                    .shadow(color: .coralEnergetico.opacity(0.12), radius: 20, x: 0, y: 10)
+                    .scaleEffect(animarEntrada ? 1.0 : 0.6)
+                    .opacity(animarEntrada ? 1.0 : 0)
                 
-                HStack(spacing: 5) {
-                    Image(systemName: "sparkle")
-                        .font(.system(size: 10))
-                    Text("AIda")
-                        .font(.system(size: 13, weight: .medium, design: .serif))
+                // Frase motivacional
+                VStack(spacing: 12) {
+                    Text(fraseDelDia)
+                        .font(.system(size: 22, weight: .medium, design: .serif))
+                        .foregroundColor(.grisPizarra)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    // Línea decorativa
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(
+                            LinearGradient(
+                                colors: [.clear, .coralEnergetico.opacity(0.35), .clear],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: 50, height: 1.5)
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: "sparkle")
+                            .font(.system(size: 9))
+                        Text("AIda")
+                            .font(.system(size: 12, weight: .medium, design: .serif))
+                    }
+                    .foregroundColor(.coralEnergetico.opacity(0.6))
                 }
-                .foregroundColor(.coralEnergetico.opacity(0.7))
+                .opacity(animarEntrada ? 1.0 : 0)
+                .offset(y: animarEntrada ? 0 : 12)
             }
-            .padding(.vertical, 32)
-            .opacity(animarEntrada ? 1.0 : 0)
-            .offset(y: animarEntrada ? 0 : 16)
+            .padding(.vertical, 24)
         }
-        .padding(.top, 10)
     }
     
     // MARK: - 2. Racha Gigante
     private var rachaGigante: some View {
-        VStack(spacing: 8) {
-            // Número gigante
+        VStack(spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text("\(GestorRacha.compartido.rachaActual)")
                     .font(.system(size: 72, weight: .heavy, design: .rounded))
                     .foregroundColor(.grisPizarra)
                 
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 32))
+                    .font(.system(size: 30))
                     .foregroundColor(.orange)
                     .offset(y: -8)
             }
@@ -144,28 +150,27 @@ struct InicioView: View {
             .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: animarEntrada)
             
             Text("días de racha")
-                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundColor(.gray)
-                .tracking(2)
+                .tracking(2.5)
                 .textCase(.uppercase)
             
-            // Botón compartir sutil
             ShareLink(
                 item: "¡Llevo \(GestorRacha.compartido.rachaActual) días seguidos entrenando con AIda! 💪🔥 ¿Te unes al reto?",
                 subject: Text("Mi Racha en AIda")
             ) {
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 11, weight: .medium))
                     Text("Compartir")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                 }
-                .foregroundColor(.gray)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
+                .foregroundColor(.gray.opacity(0.7))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                .background(Capsule().stroke(Color.gray.opacity(0.15), lineWidth: 1))
             }
-            .padding(.top, 8)
+            .padding(.top, 6)
         }
     }
     
@@ -185,18 +190,18 @@ struct InicioView: View {
                     }
                     Spacer()
                     Circle()
-                        .stroke(Color.coralEnergetico.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                        .stroke(Color.coralEnergetico.opacity(0.25), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                         .frame(width: 44, height: 44)
                         .overlay(
                             Image(systemName: "face.smiling")
                                 .font(.system(size: 20))
-                                .foregroundColor(.coralEnergetico.opacity(0.6))
+                                .foregroundColor(.coralEnergetico.opacity(0.5))
                         )
                 }
                 .padding(20)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.04))
+                        .fill(Color.gray.opacity(0.035))
                 )
             }
             .buttonStyle(.plain)
@@ -229,23 +234,91 @@ struct InicioView: View {
                 .padding(20)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.gray.opacity(0.04))
+                        .fill(Color.gray.opacity(0.035))
                 )
             }
             .buttonStyle(.plain)
         }
     }
     
-    // MARK: - 4. Accesos Rápidos
+    // MARK: - 4. Accesos Rápidos Mejorados
     private var accesosRapidos: some View {
-        VStack(spacing: 10) {
+        HStack(spacing: 14) {
             NavigationLink(destination: MisRutinasView()) {
-                FilaMinimalista(icono: "square.stack.fill", titulo: "Mis Rutinas", color: .grisPizarra)
+                VStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [.coralEnergetico, .magentaProfundo],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: "dumbbell.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    
+                    Text("Mis Rutinas")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundColor(.grisPizarra)
+                    
+                    Text("Guardadas")
+                        .font(.system(size: 11, weight: .regular, design: .rounded))
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 22)
+                .background(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color.gray.opacity(0.04))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(Color.gray.opacity(0.08), lineWidth: 1)
+                )
             }
             .buttonStyle(.plain)
             
             NavigationLink(destination: MiDietaView()) {
-                FilaMinimalista(icono: "leaf.fill", titulo: "Mi Dieta", color: .grisPizarra)
+                VStack(spacing: 14) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [.greenMint, .green.opacity(0.7)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: "leaf.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    
+                    Text("Mi Dieta")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundColor(.grisPizarra)
+                    
+                    Text("Plan alimenticio")
+                        .font(.system(size: 11, weight: .regular, design: .rounded))
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 22)
+                .background(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color.gray.opacity(0.04))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(Color.gray.opacity(0.08), lineWidth: 1)
+                )
             }
             .buttonStyle(.plain)
         }
@@ -264,39 +337,6 @@ struct InicioView: View {
         ]
         let diaDelAno = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
         return frases[diaDelAno % frases.count]
-    }
-}
-
-// MARK: - Componentes Minimalistas
-
-struct FilaMinimalista: View {
-    let icono: String
-    let titulo: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: icono)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(color.opacity(0.6))
-                .frame(width: 20)
-            
-            Text(titulo)
-                .font(.system(size: 16, weight: .regular, design: .rounded))
-                .foregroundColor(color)
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.gray.opacity(0.3))
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.gray.opacity(0.04))
-        )
     }
 }
 
