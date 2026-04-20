@@ -135,6 +135,7 @@ class RutinaViewModel {
     
     func regenerarRutina() {
         rutinaGenerada = nil
+        rutinaCompletada = false
         generarRutina()
     }
     
@@ -143,8 +144,23 @@ class RutinaViewModel {
             pasoActual = 0
             perfil = PerfilEntrenamiento()
             rutinaGenerada = nil
+            rutinaCompletada = false
             mensajeError = ""
             estado = .cuestionario
         }
+    }
+    
+    // MARK: - Completar Rutina (Racha)
+    
+    /// Indica si la rutina actual ya fue completada
+    var rutinaCompletada: Bool = false
+    
+    /// Marca la rutina como completada y actualiza la racha
+    func completarRutina() {
+        guard !rutinaCompletada else { return }
+        
+        rutinaCompletada = true
+        GestorRacha.compartido.registrarEjercicioHoy()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
 }

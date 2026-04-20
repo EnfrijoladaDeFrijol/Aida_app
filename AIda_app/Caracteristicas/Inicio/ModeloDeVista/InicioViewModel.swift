@@ -33,8 +33,8 @@ class InicioViewModel {
     }
     
     var nombreUsuario: String {
-        // TODO: Obtener del perfil del usuario cuando se implemente
-        return "Arturo"
+        // Lee del perfil del usuario (misma clave que PerfilUsuario)
+        UserDefaults.standard.string(forKey: "perfil_nombre") ?? "Arturo"
     }
     
     var tituloNavegacion: String {

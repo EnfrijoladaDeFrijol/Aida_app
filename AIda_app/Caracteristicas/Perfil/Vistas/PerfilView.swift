@@ -51,6 +51,11 @@ struct PerfilView: View {
                 EditorPerfilView(vm: vm)
             }
             .onAppear {
+                // Verificar si la racha se rompió
+                GestorRacha.compartido.verificarRacha()
+                // Refrescar datos del perfil
+                vm.perfil = PerfilUsuario()
+                
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                     animarEntrada = true
                 }

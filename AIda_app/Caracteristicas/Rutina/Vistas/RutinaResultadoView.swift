@@ -198,26 +198,63 @@ struct RutinaResultadoView: View {
     // MARK: - Botones de Acción
     private var botonesAccion: some View {
         VStack(spacing: 14) {
-            // Botón regenerar
-            Button(action: { vm.regenerarRutina() }) {
+            // Botón COMPLETAR rutina (actualiza la racha)
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    vm.completarRutina()
+                }
+            }) {
                 HStack(spacing: 10) {
-                    Image(systemName: "arrow.trianglehead.2.counterclockwise")
-                        .font(.system(size: 16, weight: .bold))
-                    Text("Regenerar con AIda")
-                        .font(.aidaBoton)
+                    Image(systemName: vm.rutinaCompletada ? "checkmark.circle.fill" : "checkmark.circle")
+                        .font(.system(size: 20, weight: .bold))
+                    
+                    if vm.rutinaCompletada {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("¡Rutina completada!")
+                                .font(.aidaBoton)
+                            Text("🔥 Racha: \(GestorRacha.compartido.rachaActual) días")
+                                .font(.aidaEtiqueta)
+                                .opacity(0.9)
+                        }
+                    } else {
+                        Text("Completar rutina")
+                            .font(.aidaBoton)
+                    }
                 }
                 .foregroundColor(.white)
                 .padding(.vertical, 16)
                 .frame(maxWidth: .infinity)
                 .background(
-                    LinearGradient(
-                        colors: [.coralEnergetico, .magentaProfundo],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                    vm.rutinaCompletada
+                    ? LinearGradient(colors: [.greenMint, .green], startPoint: .leading, endPoint: .trailing)
+                    : LinearGradient(colors: [.coralEnergetico, .magentaProfundo], startPoint: .leading, endPoint: .trailing)
                 )
                 .cornerRadius(16)
-                .shadow(color: .magentaProfundo.opacity(0.3), radius: 8, x: 0, y: 4)
+                .shadow(
+                    color: vm.rutinaCompletada ? .greenMint.opacity(0.3) : .magentaProfundo.opacity(0.3),
+                    radius: 8, x: 0, y: 4
+                )
+            }
+            .disabled(vm.rutinaCompletada)
+            .scaleEffect(vm.rutinaCompletada ? 1.03 : 1.0)
+            
+            // Botón regenerar
+            if !vm.rutinaCompletada {
+                Button(action: { vm.regenerarRutina() }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "arrow.trianglehead.2.counterclockwise")
+                            .font(.system(size: 16, weight: .bold))
+                        Text("Regenerar con AIda")
+                            .font(.aidaBoton)
+                    }
+                    .foregroundColor(.grisPizarra)
+                    .padding(.vertical, 14)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.gray.opacity(0.1))
+                    )
+                }
             }
             
             // Botón nuevo cuestionario
