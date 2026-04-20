@@ -8,7 +8,7 @@ struct BarraSuperiorAIda: View {
     var body: some View {
         HStack(spacing: 10) {
             // Logo de AIda
-            Image("LogoAIDA_negro")
+            Image("LogoAIda_negro")
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(.grisPizarra)
