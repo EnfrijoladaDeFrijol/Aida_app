@@ -14,6 +14,5 @@ struct AIda_appApp: App {
         WindowGroup {
             VistaRaiz()
         }
-        .modelContainer(for: [RegistroMensual.self])
     }
 }
