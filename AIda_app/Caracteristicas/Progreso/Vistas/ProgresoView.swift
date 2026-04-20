@@ -88,6 +88,18 @@ struct ProgresoView: View {
                 .padding(.vertical, 20)
             }
             .navigationTitle("Mi Progreso")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { viewModel.mostrarRegistroManual = true }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.aidaAcento)
+                    }
+                }
+            }
+            .sheet(isPresented: $viewModel.mostrarRegistroManual) {
+                RegistroMetricasManualView(viewModel: viewModel)
+            }
             .background(Color.aidaFondo.ignoresSafeArea())
             .onAppear {
                 viewModel.inicializarDatos(context: context)

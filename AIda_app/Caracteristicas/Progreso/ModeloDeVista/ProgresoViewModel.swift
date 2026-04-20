@@ -9,6 +9,7 @@ class ProgresoViewModel: ObservableObject {
     
     // UI State
     @Published var isAuthorized = false
+    @Published var mostrarRegistroManual = false
     
     let healthManager = HealthDataManager.shared
     
