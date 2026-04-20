@@ -28,7 +28,9 @@ struct InicioView: View {
                 }
             }
             .navigationBarHidden(true)
-            .sheet(isPresented: $vm.mostrarRegistroAnimo) {
+            .sheet(isPresented: $vm.mostrarRegistroAnimo, onDismiss: {
+                vm.cargarAnimoGuardado()
+            }) {
                 RegistroAnimoView()
             }
             .onAppear {

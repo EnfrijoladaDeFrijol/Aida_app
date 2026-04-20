@@ -39,10 +39,11 @@ struct RegistroMetricasManualView: View {
     
     private func guardarDatos() {
         // Obtenemos el inicio del mes actual
-        let mesActual = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
+        let ahora = Date()
+        let mesActual = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: ahora))!
         
         // Buscamos si ya existe el registro de este mes, si no, lo creamos
-        let registro = registros.first(where: { $0.mes == mesActual }) ?? {
+        let registro = registros.first(where: { Calendar.current.isDate($0.mes, equalTo: ahora, toGranularity: .month) }) ?? {
             let nuevo = RegistroMensual(mes: mesActual)
             context.insert(nuevo)
             return nuevo

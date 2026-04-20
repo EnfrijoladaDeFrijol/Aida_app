@@ -164,8 +164,8 @@ struct EstadisticasView: View {
     }
     
     private func sincronizarSwiftData() {
-        let mesActual = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
-        if let registroActual = registros.first(where: { $0.mes == mesActual }) {
+        let ahora = Date()
+        if let registroActual = registros.first(where: { Calendar.current.isDate($0.mes, equalTo: ahora, toGranularity: .month) }) {
             viewModel.metrosNatacionManual = registroActual.metrosTotales
             viewModel.sesionesNatacion = registroActual.sesionesNado
             viewModel.tonelajeTotal = registroActual.tonelajeTotal
