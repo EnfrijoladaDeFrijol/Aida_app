@@ -3,47 +3,32 @@ import SwiftUI
 struct InicioView: View {
     @State private var vm = InicioViewModel()
     @State private var animarEntrada = false
-    @StateObject private var statsVM = EstadisticasViewModel()
-    
-    private let perfil = PerfilUsuario()
     
     var body: some View {
         NavigationStack {
             ZStack {
-                // Fondo con gradiente suave
-                LinearGradient(
-                    colors: [.rosaBruma, Color.white.opacity(0.95), .white],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+                // Fondo limpio
+                Color.white.ignoresSafeArea()
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 28) {
+                    VStack(spacing: 40) {
                         
-                        // ── 1. FRASE MOTIVACIONAL GRANDE ──
-                        fraseMotivacional
+                        // ── 1. FRASE CENTRADA CON EFECTO ──
+                        fraseHero
                         
-                        // ── 2. TARJETA DE RACHA ──
-                        tarjetaRacha
+                        // ── 2. RACHA EN GRANDE ──
+                        rachaGigante
                         
-                        // ── 3. ESTADO DE ÁNIMO ──
+                        // ── 3. ÁNIMO MINIMALISTA ──
                         seccionAnimo
                         
-                        // ── 4. RESUMEN DE ESTADÍSTICAS ──
-                        resumenEstadisticas
-                        
-                        // ── 5. DATOS CORPORALES COMPACTOS ──
-                        datosCorporalesCompactos
-                        
-                        // ── 6. ACCESOS RÁPIDOS ──
+                        // ── 4. ACCESOS RÁPIDOS ──
                         accesosRapidos
                         
-                        Spacer(minLength: 20)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                    .padding(.bottom, 30)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 20)
+                    .padding(.bottom, 50)
                 }
             }
             .navigationTitle(vm.tituloNavegacion)
@@ -53,101 +38,135 @@ struct InicioView: View {
             .onAppear {
                 vm.cargarAnimoGuardado()
                 GestorRacha.compartido.verificarRacha()
-                statsVM.cargarDatosHealthKit()
-                withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.15)) {
+                withAnimation(.easeOut(duration: 1.0).delay(0.1)) {
                     animarEntrada = true
                 }
             }
         }
     }
     
-    // MARK: - 1. Frase Motivacional
-    private var fraseMotivacional: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(fraseDelDia)
-                .font(.system(size: 28, weight: .bold, design: .serif))
-                .foregroundColor(.grisPizarra)
-                .lineSpacing(6)
-                .fixedSize(horizontal: false, vertical: true)
-                .opacity(animarEntrada ? 1.0 : 0)
-                .offset(y: animarEntrada ? 0 : 12)
-            
-            HStack(spacing: 6) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 12))
-                    .foregroundColor(.coralEnergetico)
-                Text("— AIda")
-                    .font(.system(size: 14, weight: .medium, design: .serif))
-                    .foregroundColor(.coralEnergetico)
-            }
-            .opacity(animarEntrada ? 1.0 : 0)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 8)
-    }
-    
-    // MARK: - 2. Tarjeta de Racha
-    private var tarjetaRacha: some View {
-        HStack(spacing: 16) {
-            // Icono de flama con fondo
+    // MARK: - 1. Frase Hero
+    private var fraseHero: some View {
+        ZStack {
+            // Efecto de fondo: círculos difuminados
             ZStack {
                 Circle()
                     .fill(
-                        LinearGradient(
-                            colors: [.orange.opacity(0.8), .coralEnergetico],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                        RadialGradient(
+                            colors: [.coralEnergetico.opacity(0.08), .clear],
+                            center: .center,
+                            startRadius: 20,
+                            endRadius: 140
                         )
                     )
-                    .frame(width: 56, height: 56)
-                    .shadow(color: .orange.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .frame(width: 280, height: 280)
+                    .offset(x: -30, y: -10)
+                
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.magentaProfundo.opacity(0.06), .clear],
+                            center: .center,
+                            startRadius: 10,
+                            endRadius: 120
+                        )
+                    )
+                    .frame(width: 220, height: 220)
+                    .offset(x: 50, y: 30)
+                
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.orange.opacity(0.05), .clear],
+                            center: .center,
+                            startRadius: 10,
+                            endRadius: 100
+                        )
+                    )
+                    .frame(width: 180, height: 180)
+                    .offset(x: -60, y: 50)
+            }
+            .blur(radius: 20)
+            .scaleEffect(animarEntrada ? 1.0 : 0.8)
+            .opacity(animarEntrada ? 1.0 : 0)
+            
+            // Frase
+            VStack(spacing: 16) {
+                Text(fraseDelDia)
+                    .font(.system(size: 26, weight: .semibold, design: .serif))
+                    .foregroundColor(.grisPizarra)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(8)
+                    .fixedSize(horizontal: false, vertical: true)
+                
+                // Línea decorativa
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [.clear, .coralEnergetico.opacity(0.4), .clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: 60, height: 2)
+                
+                HStack(spacing: 5) {
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 10))
+                    Text("AIda")
+                        .font(.system(size: 13, weight: .medium, design: .serif))
+                }
+                .foregroundColor(.coralEnergetico.opacity(0.7))
+            }
+            .padding(.vertical, 32)
+            .opacity(animarEntrada ? 1.0 : 0)
+            .offset(y: animarEntrada ? 0 : 16)
+        }
+        .padding(.top, 10)
+    }
+    
+    // MARK: - 2. Racha Gigante
+    private var rachaGigante: some View {
+        VStack(spacing: 8) {
+            // Número gigante
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("\(GestorRacha.compartido.rachaActual)")
+                    .font(.system(size: 72, weight: .heavy, design: .rounded))
+                    .foregroundColor(.grisPizarra)
                 
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 26))
-                    .foregroundColor(.white)
+                    .font(.system(size: 32))
+                    .foregroundColor(.orange)
+                    .offset(y: -8)
             }
-            .scaleEffect(animarEntrada ? 1.0 : 0.3)
-            .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2), value: animarEntrada)
+            .scaleEffect(animarEntrada ? 1.0 : 0.5)
+            .opacity(animarEntrada ? 1.0 : 0)
+            .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: animarEntrada)
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\(GestorRacha.compartido.rachaActual)")
-                    .font(.system(size: 36, weight: .heavy, design: .rounded))
-                    .foregroundColor(.grisPizarra)
-                +
-                Text(" días")
-                    .font(.system(size: 18, weight: .medium, design: .rounded))
-                    .foregroundColor(.gray)
-                
-                Text("de racha activa")
-                    .font(.aidaEtiqueta)
-                    .foregroundColor(.gray)
-            }
+            Text("días de racha")
+                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .foregroundColor(.gray)
+                .tracking(2)
+                .textCase(.uppercase)
             
-            Spacer()
-            
-            // Botón compartir
+            // Botón compartir sutil
             ShareLink(
                 item: "¡Llevo \(GestorRacha.compartido.rachaActual) días seguidos entrenando con AIda! 💪🔥 ¿Te unes al reto?",
                 subject: Text("Mi Racha en AIda")
             ) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.orange)
-                    .padding(10)
-                    .background(Color.orange.opacity(0.12))
-                    .clipShape(Circle())
+                HStack(spacing: 6) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 12, weight: .medium))
+                    Text("Compartir")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                }
+                .foregroundColor(.gray)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
             }
+            .padding(.top, 8)
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.orange.opacity(0.15), lineWidth: 1)
-        )
-        .shadow(color: Color.orange.opacity(0.08), radius: 16, x: 0, y: 8)
     }
     
     // MARK: - 3. Estado de Ánimo
@@ -156,334 +175,132 @@ struct InicioView: View {
         if vm.animoDelDia == nil {
             Button(action: { vm.abrirRegistroAnimo() }) {
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("¿Cómo te sientes hoy?")
-                            .font(.aidaCuerpoDestacado)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("¿Cómo te sientes?")
+                            .font(.system(size: 17, weight: .medium, design: .rounded))
                             .foregroundColor(.grisPizarra)
-                        Text("Registra tu ánimo para personalizar tu experiencia.")
-                            .font(.aidaEtiqueta)
+                        Text("Toca para registrar tu ánimo")
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
                             .foregroundColor(.gray)
                     }
                     Spacer()
-                    Image(systemName: "face.smiling.inverse")
-                        .font(.system(size: 34))
-                        .foregroundColor(.coralEnergetico)
+                    Circle()
+                        .stroke(Color.coralEnergetico.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                        .frame(width: 44, height: 44)
+                        .overlay(
+                            Image(systemName: "face.smiling")
+                                .font(.system(size: 20))
+                                .foregroundColor(.coralEnergetico.opacity(0.6))
+                        )
                 }
                 .padding(20)
                 .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.coralEnergetico.opacity(0.25), style: StrokeStyle(lineWidth: 1.5, dash: [8, 5]))
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.gray.opacity(0.04))
                 )
             }
             .buttonStyle(.plain)
         } else {
             let animo = vm.animoDelDia!
             Button(action: { vm.mostrarRegistroAnimo = true }) {
-                HStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(animo.colorAsociado.opacity(0.15))
-                            .frame(width: 52, height: 52)
-                        Image(systemName: animo.icono)
-                            .font(.system(size: 26))
-                            .foregroundColor(animo.colorAsociado)
-                    }
+                HStack(spacing: 14) {
+                    Circle()
+                        .fill(animo.colorAsociado.opacity(0.1))
+                        .frame(width: 44, height: 44)
+                        .overlay(
+                            Image(systemName: animo.icono)
+                                .font(.system(size: 20))
+                                .foregroundColor(animo.colorAsociado)
+                        )
                     
-                    VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("Hoy te sientes")
-                            .font(.aidaEtiqueta)
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
                             .foregroundColor(.gray)
                         Text(animo.rawValue)
-                            .font(.aidaTitulo)
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundColor(.grisPizarra)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.gray.opacity(0.4))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.gray.opacity(0.3))
                 }
                 .padding(20)
                 .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.gray.opacity(0.04))
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.white.opacity(0.6), lineWidth: 1)
-                )
-                .shadow(color: animo.colorAsociado.opacity(0.12), radius: 12, x: 0, y: 6)
             }
             .buttonStyle(.plain)
         }
     }
     
-    // MARK: - 4. Resumen de Estadísticas
-    private var resumenEstadisticas: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Tu actividad")
-                .font(.aidaSubtitulo)
-                .foregroundColor(.grisPizarra)
-            
-            // Fila 1: Pasos y Calorías
-            HStack(spacing: 12) {
-                MiniStatCard(
-                    icono: "figure.walk",
-                    titulo: "Pasos",
-                    valor: formatearNumero(statsVM.pasosActuales),
-                    meta: "hoy",
-                    color: .coralEnergetico,
-                    animado: animarEntrada,
-                    delay: 0.1
-                )
-                
-                MiniStatCard(
-                    icono: "bolt.fill",
-                    titulo: "Calorías",
-                    valor: "\(Int(statsVM.caloriasActivas))",
-                    meta: "kcal",
-                    color: .orange,
-                    animado: animarEntrada,
-                    delay: 0.2
-                )
-            }
-            
-            // Fila 2: Distancia y Rutinas
-            HStack(spacing: 12) {
-                MiniStatCard(
-                    icono: "map.fill",
-                    titulo: "Distancia",
-                    valor: String(format: "%.1f", statsVM.kilometrosActuales),
-                    meta: "km",
-                    color: .greenMint,
-                    animado: animarEntrada,
-                    delay: 0.3
-                )
-                
-                MiniStatCard(
-                    icono: "checkmark.seal.fill",
-                    titulo: "Rutinas",
-                    valor: "\(perfil.rutinasCompletadas)",
-                    meta: "completadas",
-                    color: .magentaProfundo,
-                    animado: animarEntrada,
-                    delay: 0.4
-                )
-            }
-        }
-    }
-    
-    // MARK: - 5. Datos Corporales
-    private var datosCorporalesCompactos: some View {
-        HStack(spacing: 12) {
-            DatoCompacto(icono: "scalemass.fill", titulo: "Peso", valor: String(format: "%.1f", perfil.pesoKg), unidad: "kg")
-            DatoCompacto(icono: "ruler.fill", titulo: "Altura", valor: "\(perfil.alturaCm)", unidad: "cm")
-            
-            // IMC con color semántico
-            VStack(spacing: 6) {
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(perfil.colorIMC)
-                Text(String(format: "%.1f", perfil.imc))
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(.grisPizarra)
-                Text(perfil.categoriaIMC)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(perfil.colorIMC))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.ultraThinMaterial)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(0.6), lineWidth: 1)
-            )
-        }
-    }
-    
-    // MARK: - 6. Accesos Rápidos
+    // MARK: - 4. Accesos Rápidos
     private var accesosRapidos: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             NavigationLink(destination: MisRutinasView()) {
-                AccesoRapidoFila(
-                    icono: "folder.fill",
-                    titulo: "Mis Rutinas Guardadas",
-                    color: .magentaProfundo
-                )
+                FilaMinimalista(icono: "square.stack.fill", titulo: "Mis Rutinas", color: .grisPizarra)
             }
             .buttonStyle(.plain)
             
             NavigationLink(destination: MiDietaView()) {
-                AccesoRapidoFila(
-                    icono: "fork.knife.circle.fill",
-                    titulo: "Mi Dieta",
-                    color: .greenMint
-                )
+                FilaMinimalista(icono: "leaf.fill", titulo: "Mi Dieta", color: .grisPizarra)
             }
             .buttonStyle(.plain)
         }
     }
     
-    // MARK: - Helpers
-    
+    // MARK: - Frase del Día
     private var fraseDelDia: String {
         let frases = [
             "Cada paso que das\nte acerca a la mejor\nversión de ti.",
-            "No se trata de ser\nperfecto, se trata de\nser constante.",
+            "No se trata de ser\nperfecto, se trata\nde ser constante.",
             "Tu cuerpo puede\ncon todo. Convence\na tu mente.",
             "El único mal\nentrenamiento es\nel que no hiciste.",
-            "Hoy es un buen día\npara superar al\nde ayer.",
+            "Hoy es un buen día\npara superar\nal de ayer.",
             "La disciplina es\nel puente entre\nmetas y logros.",
             "Pequeños pasos,\ngrandes cambios.",
         ]
         let diaDelAno = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
         return frases[diaDelAno % frases.count]
     }
-    
-    private func formatearNumero(_ numero: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: numero)) ?? "\(numero)"
-    }
 }
 
-// MARK: - Componentes Reutilizables
+// MARK: - Componentes Minimalistas
 
-struct MiniStatCard: View {
+struct FilaMinimalista: View {
     let icono: String
     let titulo: String
-    let valor: String
-    let meta: String
     let color: Color
-    var animado: Bool
-    var delay: Double = 0
     
     var body: some View {
         HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(color.opacity(0.12))
-                    .frame(width: 42, height: 42)
-                Image(systemName: icono)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(color)
-            }
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(titulo)
-                    .font(.aidaEtiqueta)
-                    .foregroundColor(.gray)
-                HStack(alignment: .lastTextBaseline, spacing: 3) {
-                    Text(valor)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundColor(.grisPizarra)
-                    Text(meta)
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundColor(.gray)
-                }
-            }
-            
-            Spacer()
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.white.opacity(0.6), lineWidth: 1)
-        )
-        .shadow(color: color.opacity(0.08), radius: 8, x: 0, y: 4)
-        .scaleEffect(animado ? 1.0 : 0.85)
-        .opacity(animado ? 1.0 : 0)
-        .animation(
-            .spring(response: 0.5, dampingFraction: 0.7).delay(delay),
-            value: animado
-        )
-    }
-}
-
-struct DatoCompacto: View {
-    let icono: String
-    let titulo: String
-    let valor: String
-    let unidad: String
-    
-    var body: some View {
-        VStack(spacing: 6) {
             Image(systemName: icono)
-                .font(.system(size: 16))
-                .foregroundColor(.coralEnergetico)
-            Text(valor)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundColor(.grisPizarra)
-            Text(unidad)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.white.opacity(0.6), lineWidth: 1)
-        )
-    }
-}
-
-struct AccesoRapidoFila: View {
-    let icono: String
-    let titulo: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(color.opacity(0.12))
-                    .frame(width: 36, height: 36)
-                Image(systemName: icono)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(color)
-            }
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(color.opacity(0.6))
+                .frame(width: 20)
             
             Text(titulo)
-                .font(.aidaCuerpo)
-                .foregroundColor(.grisPizarra)
+                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .foregroundColor(color)
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.gray.opacity(0.4))
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.gray.opacity(0.3))
         }
-        .padding(14)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(.ultraThinMaterial)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                .fill(Color.gray.opacity(0.04))
         )
     }
 }
 
-// MARK: - Componente legado (MetricRingCard) preservado para compatibilidad
+// MARK: - Componente legado preservado para compatibilidad
 struct MetricRingCard: View {
     var title: String; var value: String; var subtitle: String; var icon: String; var progress: Double; var tintColor: Color
     var body: some View {
