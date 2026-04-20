@@ -30,7 +30,7 @@ struct InicioView: View {
                     .padding(.bottom, 50)
                 }
             }
-            .navigationTitle(vm.tituloNavegacion)
+            .navigationBarHidden(true)
             .sheet(isPresented: $vm.mostrarRegistroAnimo) {
                 RegistroAnimoView()
             }
@@ -77,45 +77,38 @@ struct InicioView: View {
             .scaleEffect(animarEntrada ? 1.0 : 0.8)
             .opacity(animarEntrada ? 1.0 : 0)
             
-            VStack(spacing: 20) {
+            HStack(spacing: 56) {
                 // GIF de AIda corriendo
                 GIFImageView(gifName: "jaida_se_corre")
-                    .frame(width: 180, height: 180)
+                    .frame(width: 130, height: 130)
                     .scaleEffect(animarEntrada ? 0.4 : 0.4)
                     .opacity(animarEntrada ? 1.0 : 0)
                 
                 // Frase motivacional
-                VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text(fraseDelDia)
-                        .font(.system(size: 22, weight: .medium, design: .serif))
+                        .font(.system(size:20, weight: .medium, design: .serif))
                         .foregroundColor(.grisPizarra)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(6)
+                        .multilineTextAlignment(.leading)
+                        .lineSpacing(5)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    // Línea decorativa
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(
-                            LinearGradient(
-                                colors: [.clear, .coralEnergetico.opacity(0.35), .clear],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: 50, height: 1.5)
-                    
                     HStack(spacing: 4) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.coralEnergetico.opacity(0.35))
+                            .frame(width: 20, height: 1.5)
+                        
                         Image(systemName: "sparkle")
-                            .font(.system(size: 9))
+                            .font(.system(size: 8))
                         Text("AIda")
-                            .font(.system(size: 12, weight: .medium, design: .serif))
+                            .font(.system(size: 11, weight: .medium, design: .serif))
                     }
                     .foregroundColor(.coralEnergetico.opacity(0.6))
                 }
                 .opacity(animarEntrada ? 1.0 : 0)
                 .offset(y: animarEntrada ? 0 : 12)
             }
-            .padding(.vertical, 24)
+            .padding(.vertical, 16)
         }
     }
     
