@@ -27,10 +27,16 @@ struct RutinaGenerada: Codable, Identifiable {
     // Cuando no podemos decodificar el JSON, creamos una rutina de texto libre
     var textoLibre: String?
     
-    // Propiedad para no incluir "id" al decodificar desde JSON
-    // (Gemini no envía un "id", lo generamos nosotros)
+    // Fecha en que se guardó la rutina (opcional, nil si no está guardada)
+    var fechaGuardado: Date?
+    
+    // Dieta generada opcionalmente junto con la rutina
+    var dieta: DietaGenerada?
+    
+    // Propiedad para no incluir "id", "fechaGuardado" al decodificar desde JSON
+    // (Gemini no envía un "id" ni "fechaGuardado", lo generamos nosotros)
     enum CodingKeys: String, CodingKey {
-        case nombre, secciones, mensajeMotivacional, duracionEstimada, textoLibre
+        case nombre, secciones, mensajeMotivacional, duracionEstimada, textoLibre, dieta
     }
 }
 
@@ -59,6 +65,29 @@ struct Ejercicio: Codable, Identifiable {
     }
 }
 
+// MARK: - DietaGenerada
+// Plan de alimentación que acompaña a la rutina
+struct DietaGenerada: Codable {
+    var descripcion: String       // "Enfoque en proteínas para recuperar músculo"
+    var comidas: [Comida]
+    
+    enum CodingKeys: String, CodingKey {
+        case descripcion, comidas
+    }
+}
+
+// MARK: - Comida
+// Representa una comida del día (Desayuno, Almuerzo, Cena, Snack)
+struct Comida: Codable, Identifiable {
+    var id: String = UUID().uuidString
+    var tipo: String              // "Desayuno", "Almuerzo"
+    var sugerencia: String        // "Avena con plátano y proteína"
+    
+    enum CodingKeys: String, CodingKey {
+        case tipo, sugerencia
+    }
+}
+
 // MARK: - Ejemplo de uso
 // Así se vería una rutina completa como datos:
 //
@@ -78,5 +107,8 @@ struct Ejercicio: Codable, Identifiable {
 //         ])
 //     ],
 //     mensajeMotivacional: "¡Tú puedes! Cada repetición cuenta 💪",
-//     duracionEstimada: "30 minutos"
+//     duracionEstimada: "30 minutos",
+//     dieta: DietaGenerada(descripcion: "Alta en proteínas", comidas: [
+//         Comida(tipo: "Desayuno", sugerencia: "Huevos revueltos con espinacas")
+//     ])
 // )

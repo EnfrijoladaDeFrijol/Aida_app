@@ -29,6 +29,12 @@ struct RutinaResultadoView: View {
                         }
                     }
                     
+                    // --- DIETA ---
+                    if let dieta = rutina.dieta {
+                        tarjetaDieta(dieta)
+                    }
+                    
+                    
                     // --- BOTONES DE ACCIÓN ---
                     botonesAccion
                 }
@@ -174,6 +180,63 @@ struct RutinaResultadoView: View {
         .padding(.vertical, 4)
     }
     
+    // MARK: - Tarjeta de Dieta
+    private func tarjetaDieta(_ dieta: DietaGenerada) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Título de la dieta
+            HStack {
+                Image(systemName: "fork.knife")
+                    .foregroundColor(.coralEnergetico)
+                Text("Sugerencia de Alimentación")
+                    .font(.aidaSubtitulo)
+                    .foregroundColor(.grisPizarra)
+            }
+            
+            Text(dieta.descripcion)
+                .font(.aidaCuerpo)
+                .foregroundColor(.gray)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // Lista de comidas
+            VStack(spacing: 12) {
+                ForEach(dieta.comidas) { comida in
+                    filaComida(comida)
+                }
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.white)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 4)
+    }
+    
+    // MARK: - Fila de Comida
+    private func filaComida(_ comida: Comida) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            // Punto de viñeta
+            Circle()
+                .fill(Color.coralEnergetico.opacity(0.6))
+                .frame(width: 8, height: 8)
+                .padding(.top, 6)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(comida.tipo)
+                    .font(.aidaCuerpoDestacado)
+                    .foregroundColor(.grisPizarra)
+                Text(comida.sugerencia)
+                    .font(.aidaEtiqueta)
+                    .foregroundColor(.gray)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+    
     // MARK: - Texto Libre (fallback)
     private func tarjetaTextoLibre(_ texto: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -194,6 +257,8 @@ struct RutinaResultadoView: View {
         )
         .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 4)
     }
+    
+    @State private var rutinaGuardada: Bool = false
     
     // MARK: - Botones de Acción
     private var botonesAccion: some View {
@@ -237,6 +302,34 @@ struct RutinaResultadoView: View {
             }
             .disabled(vm.rutinaCompletada)
             .scaleEffect(vm.rutinaCompletada ? 1.03 : 1.0)
+            
+            // Botón Guardar Rutina
+            if let rutina = vm.rutinaGenerada {
+                Button(action: {
+                    GestorRutinas.compartido.guardarRutina(rutina)
+                    withAnimation {
+                        rutinaGuardada = true
+                    }
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: rutinaGuardada ? "checkmark.circle.fill" : "heart.fill")
+                            .font(.system(size: 16, weight: .bold))
+                        Text(rutinaGuardada ? "¡Rutina Guardada!" : "Guardar Rutina")
+                            .font(.aidaBoton)
+                    }
+                    .foregroundColor(rutinaGuardada ? .white : .magentaProfundo)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity)
+                    .background(rutinaGuardada ? Color.green : Color.magentaProfundo.opacity(0.1))
+                    .cornerRadius(16)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(rutinaGuardada ? Color.clear : Color.magentaProfundo.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .disabled(rutinaGuardada)
+            }
             
             // Botón regenerar
             if !vm.rutinaCompletada {

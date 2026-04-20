@@ -129,9 +129,9 @@ actor ServicioGemini {
     // Entre más específico, mejor resultado.
     private func construirPrompt(perfil: PerfilEntrenamiento) -> String {
         return """
-        Eres AIda, una entrenadora fitness profesional y empática que habla en español.
+        Eres AIda, una entrenadora fitness profesional, nutricionista y empática que habla en español.
         
-        Genera una rutina de ejercicio personalizada basada en este perfil del usuario:
+        Genera una rutina de ejercicio personalizada y una dieta adecuada basada en este perfil del usuario:
         \(perfil.descripcionParaIA)
         
         IMPORTANTE: Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown, sin ```json.
@@ -168,7 +168,28 @@ actor ServicioGemini {
                         }
                     ]
                 }
-            ]
+            ],
+            "dieta": {
+                "descripcion": "Breve explicación de por qué esta dieta ayuda al objetivo",
+                "comidas": [
+                    {
+                        "tipo": "Desayuno",
+                        "sugerencia": "Sugerencia de comida detallada"
+                    },
+                    {
+                        "tipo": "Almuerzo",
+                        "sugerencia": "Sugerencia de comida detallada"
+                    },
+                    {
+                        "tipo": "Snack",
+                        "sugerencia": "Sugerencia de comida detallada"
+                    },
+                    {
+                        "tipo": "Cena",
+                        "sugerencia": "Sugerencia de comida detallada"
+                    }
+                ]
+            }
         }
         
         Reglas:
@@ -178,6 +199,7 @@ actor ServicioGemini {
         - Si el estado de ánimo es "Estresado" o "Cansado", reduce la intensidad y agrega ejercicios de respiración
         - Adapta los ejercicios al equipo disponible
         - El mensaje motivacional debe ser personalizado según el ánimo del usuario
+        - La dieta debe ser realista, saludable y alineada al objetivo (ej. déficit calórico para perder peso, alta en proteína para ganar músculo).
         """
     }
     

@@ -154,12 +154,29 @@ struct InicioView: View {
     }
     
     private var actionButton: some View {
-        Button(action: {}) {
-            HStack(spacing: 12) {
-                Image(systemName: "play.circle.fill").font(.title2)
-                Text("Iniciar Pausa Activa").font(.headline).fontWeight(.bold)
+        VStack(spacing: 14) {
+            Button(action: {}) {
+                HStack(spacing: 12) {
+                    Image(systemName: "play.circle.fill").font(.title2)
+                    Text("Iniciar Pausa Activa").font(.headline).fontWeight(.bold)
+                }
+                .foregroundColor(.white).padding(.vertical, 18).frame(maxWidth: .infinity).background(LinearGradient(colors: [.coralEnergetico, .magentaProfundo], startPoint: .leading, endPoint: .trailing)).clipShape(Capsule()).shadow(color: .magentaProfundo.opacity(0.3), radius: 10, x: 0, y: 5)
             }
-            .foregroundColor(.white).padding(.vertical, 18).frame(maxWidth: .infinity).background(LinearGradient(colors: [.coralEnergetico, .magentaProfundo], startPoint: .leading, endPoint: .trailing)).clipShape(Capsule()).shadow(color: .magentaProfundo.opacity(0.3), radius: 10, x: 0, y: 5)
+            
+            NavigationLink(destination: MisRutinasView()) {
+                HStack(spacing: 12) {
+                    Image(systemName: "folder.fill").font(.title2)
+                    Text("Mis Rutinas Guardadas").font(.headline).fontWeight(.bold)
+                }
+                .foregroundColor(.magentaProfundo)
+                .padding(.vertical, 18)
+                .frame(maxWidth: .infinity)
+                .background(Color.magentaProfundo.opacity(0.1))
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule().stroke(Color.magentaProfundo.opacity(0.3), lineWidth: 1)
+                )
+            }
         }
     }
 }
