@@ -29,12 +29,6 @@ struct RutinaResultadoView: View {
                         }
                     }
                     
-                    // --- DIETA ---
-                    if let dieta = rutina.dieta {
-                        tarjetaDieta(dieta)
-                    }
-                    
-                    
                     // --- BOTONES DE ACCIÓN ---
                     botonesAccion
                 }
@@ -215,6 +209,17 @@ struct RutinaResultadoView: View {
                     Text("Lista de Compras")
                         .font(.aidaCuerpoDestacado)
                         .foregroundColor(.grisPizarra)
+                    
+                    Spacer()
+                    
+                    ShareLink(
+                        item: "Lista de Compras - AIda:\n\n" + compras.map { "• \($0)" }.joined(separator: "\n"),
+                        subject: Text("Lista de Compras")
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.coralEnergetico)
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 6) {

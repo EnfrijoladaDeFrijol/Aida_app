@@ -16,6 +16,9 @@ struct InicioView: View {
                         // 1. Tarjeta de Insight de AIda
                         aidaInsightCard
                         
+                        // 1.5. Sección de Racha
+                        seccionRacha
+                        
                         // 2. Sección de Estado de Ánimo Dinámica
                         seccionAnimo
                         
@@ -53,8 +56,46 @@ struct InicioView: View {
             }
             .onAppear {
                 vm.cargarAnimoGuardado()
+                GestorRacha.compartido.verificarRacha()
             }
         }
+    }
+    
+    // MARK: - Sección de Racha
+    private var seccionRacha: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Racha de entrenamiento")
+                    .font(.aidaSubtitulo)
+                    .foregroundColor(.grisPizarra)
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .foregroundColor(.orange)
+                    Text("\(GestorRacha.compartido.rachaActual) días seguidos")
+                        .font(.aidaCuerpoDestacado)
+                        .foregroundColor(.orange)
+                }
+            }
+            
+            Spacer()
+            
+            ShareLink(
+                item: "¡Llevo \(GestorRacha.compartido.rachaActual) días seguidos entrenando con AIda! 💪🔥 ¿Te unes al reto?",
+                subject: Text("Mi Racha en AIda")
+            ) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.orange)
+                    .padding(12)
+                    .background(Color.orange.opacity(0.12))
+                    .clipShape(Circle())
+            }
+        }
+        .padding(20)
+        .background(.ultraThinMaterial)
+        .cornerRadius(24)
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.6), lineWidth: 1))
+        .shadow(color: Color.orange.opacity(0.15), radius: 10, x: 0, y: 5)
     }
     
     // MARK: - Sección de Ánimo (Dinámica)
@@ -175,6 +216,21 @@ struct InicioView: View {
                 .clipShape(Capsule())
                 .overlay(
                     Capsule().stroke(Color.magentaProfundo.opacity(0.3), lineWidth: 1)
+                )
+            }
+            
+            NavigationLink(destination: MiDietaView()) {
+                HStack(spacing: 12) {
+                    Image(systemName: "fork.knife.circle.fill").font(.title2)
+                    Text("Mi Dieta").font(.headline).fontWeight(.bold)
+                }
+                .foregroundColor(.greenMint)
+                .padding(.vertical, 18)
+                .frame(maxWidth: .infinity)
+                .background(Color.greenMint.opacity(0.1))
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule().stroke(Color.greenMint.opacity(0.3), lineWidth: 1)
                 )
             }
         }
