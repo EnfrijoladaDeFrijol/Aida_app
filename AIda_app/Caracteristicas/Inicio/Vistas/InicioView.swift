@@ -10,24 +10,24 @@ struct InicioView: View {
                 Color.white.ignoresSafeArea()
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 36) {
+                    VStack(spacing: 20) {
                         
-                        // ── 1. RACHA EN GRANDE ──
+                        // ── 1. ACCESOS RÁPIDOS (ARRIBA) ──
+                        accesosRapidos
+                        
+                        // ── 2. RACHA EN GRANDE ──
                         rachaGigante
                         
-                        // ── 2. GIF DE AIDA + FRASE ──
+                        // ── 3. GIF DE AIDA + FRASE ──
                         heroSection
                         
-                        // ── 3. ÁNIMO MINIMALISTA ──
+                        // ── 4. ÁNIMO MINIMALISTA ──
                         seccionAnimo
-                        
-                        // ── 4. ACCESOS RÁPIDOS MEJORADOS ──
-                        accesosRapidos
                         
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 12)
-                    .padding(.bottom, 50)
+                    .padding(.top, 16)
+                    .padding(.bottom, 20)
                 }
             }
             .navigationBarHidden(true)
@@ -189,7 +189,7 @@ struct InicioView: View {
                                 .foregroundColor(.coralEnergetico.opacity(0.5))
                         )
                 }
-                .padding(20)
+                .padding(4)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.gray.opacity(0.035))
@@ -222,7 +222,7 @@ struct InicioView: View {
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.gray.opacity(0.3))
                 }
-                .padding(20)
+                .padding(5)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.gray.opacity(0.035))
@@ -234,11 +234,11 @@ struct InicioView: View {
     
     // MARK: - 4. Accesos Rápidos Mejorados
     private var accesosRapidos: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             NavigationLink(destination: MisRutinasView()) {
-                VStack(spacing: 14) {
+                VStack(spacing: 10) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [.coralEnergetico, .magentaProfundo],
@@ -246,38 +246,38 @@ struct InicioView: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 48, height: 48)
+                            .frame(width: 40, height: 40)
                         
                         Image(systemName: "dumbbell.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                     }
                     
                     Text("Mis Rutinas")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundColor(.grisPizarra)
                     
                     Text("Guardadas")
-                        .font(.system(size: 11, weight: .regular, design: .rounded))
+                        .font(.system(size: 10, weight: .regular, design: .rounded))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 22)
+                .padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.gray.opacity(0.04))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .stroke(Color.gray.opacity(0.08), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
             
             NavigationLink(destination: MiDietaView()) {
-                VStack(spacing: 14) {
+                VStack(spacing: 10) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .fill(
                                 LinearGradient(
                                     colors: [.greenMint, .green.opacity(0.7)],
@@ -285,29 +285,29 @@ struct InicioView: View {
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .frame(width: 48, height: 48)
+                            .frame(width: 40, height: 40)
                         
                         Image(systemName: "leaf.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                     }
                     
                     Text("Mi Dieta")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundColor(.grisPizarra)
                     
                     Text("Plan alimenticio")
-                        .font(.system(size: 11, weight: .regular, design: .rounded))
+                        .font(.system(size: 10, weight: .regular, design: .rounded))
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 22)
+                .padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.gray.opacity(0.04))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .stroke(Color.gray.opacity(0.08), lineWidth: 1)
                 )
             }
