@@ -20,6 +20,12 @@ struct VistaRaiz: View {
                         Label("Rutina", systemImage: "figure.run")
                     }
                 
+                // 4. Progreso Mensual (Dashboard)
+                ProgresoView()
+                    .tabItem {
+                        Label("Progreso", systemImage: "chart.bar.fill")
+                    }
+                
 
                 // 5. Perfil del Usuario
                 PerfilView()
