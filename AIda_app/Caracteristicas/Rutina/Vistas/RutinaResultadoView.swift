@@ -203,6 +203,34 @@ struct RutinaResultadoView: View {
                     filaComida(comida)
                 }
             }
+            
+            // Lista de compras
+            if let compras = dieta.listaCompras, !compras.isEmpty {
+                Divider()
+                    .padding(.vertical, 8)
+                
+                HStack {
+                    Image(systemName: "cart.fill")
+                        .foregroundColor(.greenMint)
+                    Text("Lista de Compras")
+                        .font(.aidaCuerpoDestacado)
+                        .foregroundColor(.grisPizarra)
+                }
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(compras, id: \.self) { item in
+                        HStack(spacing: 8) {
+                            Image(systemName: "circle")
+                                .font(.system(size: 10))
+                                .foregroundColor(.gray.opacity(0.5))
+                            Text(item)
+                                .font(.aidaCuerpo)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                .padding(.top, 4)
+            }
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)

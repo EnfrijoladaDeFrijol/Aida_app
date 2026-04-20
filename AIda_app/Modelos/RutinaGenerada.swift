@@ -70,9 +70,10 @@ struct Ejercicio: Codable, Identifiable {
 struct DietaGenerada: Codable {
     var descripcion: String       // "Enfoque en proteínas para recuperar músculo"
     var comidas: [Comida]
+    var listaCompras: [String]?   // "Manzanas", "Avena", "Pechuga de pollo"
     
     enum CodingKeys: String, CodingKey {
-        case descripcion, comidas
+        case descripcion, comidas, listaCompras
     }
 }
 

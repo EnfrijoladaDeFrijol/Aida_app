@@ -188,6 +188,11 @@ actor ServicioGemini {
                         "tipo": "Cena",
                         "sugerencia": "Sugerencia de comida detallada"
                     }
+                ],
+                "listaCompras": [
+                    "Ingrediente 1",
+                    "Ingrediente 2",
+                    "Ingrediente 3"
                 ]
             }
         }
