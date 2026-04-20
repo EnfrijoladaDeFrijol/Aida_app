@@ -22,7 +22,7 @@ struct VistaRaiz: View {
                 }
             
             // 3. Progreso (datos/metricas)
-            Text("Aquí irá la vista de EstadisticasView")
+            EstadisticasView()
                 .tabItem {
                     Label("Progreso", systemImage: "chart.bar.fill")
                 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct AIda_appApp: App {
@@ -13,5 +14,6 @@ struct AIda_appApp: App {
         WindowGroup {
             VistaRaiz()
         }
+        .modelContainer(for: [RegistroMensual.self])
     }
 }
