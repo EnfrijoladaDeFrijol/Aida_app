@@ -120,7 +120,7 @@ class RecapViewModel: ObservableObject {
             return DeporteEstrella(nombre: "Empezando", icono: "figure.walk", color: .orange,
                                    metricaPrincipal: "0", unidadPrincipal: "",
                                    metricaSecundaria: "", unidadSecundaria: "",
-                                   emoji: "🚶", mensaje: "¡A movernos!")
+                                   emoji: "🚶", imagenMascota: "AIDA_Bravo", mensaje: "¡A movernos!")
         }
         
         var puntajes: [(String, Double)] = []
@@ -134,7 +134,7 @@ class RecapViewModel: ObservableObject {
             return DeporteEstrella(nombre: "Empezando", icono: "figure.walk", color: .orange,
                                    metricaPrincipal: "0", unidadPrincipal: "",
                                    metricaSecundaria: "", unidadSecundaria: "",
-                                   emoji: "🚶", mensaje: "¡Registra actividad!")
+                                   emoji: "🚶", imagenMascota: "AIDA_Bravo", mensaje: "¡Registra actividad!")
         }
         
         switch fav.0 {
@@ -148,6 +148,7 @@ class RecapViewModel: ObservableObject {
                 metricaSecundaria: "\(reg.sesionesNado)",
                 unidadSecundaria: "sesiones",
                 emoji: "🏊",
+                imagenMascota: "AIDA_Nadador",
                 mensaje: "Pez en el agua"
             )
         case "Running":
@@ -160,6 +161,7 @@ class RecapViewModel: ObservableObject {
                 metricaSecundaria: String(format: "%.0f", reg.elevacionGanada),
                 unidadSecundaria: "m elevación",
                 emoji: "🏃",
+                imagenMascota: "AIDA_Corriendo",
                 mensaje: "Imparable"
             )
         case "Gimnasio":
@@ -174,13 +176,14 @@ class RecapViewModel: ObservableObject {
                 metricaSecundaria: prTexto,
                 unidadSecundaria: "PR del mes",
                 emoji: "🏋️",
+                imagenMascota: "AIDA_LevantamientoPesas",
                 mensaje: "Beast mode"
             )
         default:
             return DeporteEstrella(nombre: "Activo", icono: "flame.fill", color: .orange,
                                    metricaPrincipal: "0", unidadPrincipal: "",
                                    metricaSecundaria: "", unidadSecundaria: "",
-                                   emoji: "🔥", mensaje: "¡Sigue así!")
+                                   emoji: "🔥", imagenMascota: "AIDA_Bravo", mensaje: "¡Sigue así!")
         }
     }
     
@@ -232,5 +235,6 @@ struct DeporteEstrella {
     let metricaSecundaria: String
     let unidadSecundaria: String
     let emoji: String
+    let imagenMascota: String
     let mensaje: String
 }

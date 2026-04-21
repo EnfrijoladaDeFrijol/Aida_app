@@ -1,8 +1,8 @@
 import SwiftUI
 
 // MARK: - RecapSlide2View
-// Slide 2: Deporte Estrella + Stats detalladas.
-// Estilo: Tarjetas limpias con emojis, divertido, compartible.
+// Slide 2: Deporte Estrella — Mascota prominente con stats detalladas.
+// Blur de fondo con la mascota, tarjetas limpias.
 
 struct RecapSlide2View: View {
     @ObservedObject var viewModel: RecapViewModel
@@ -18,47 +18,59 @@ struct RecapSlide2View: View {
             ZStack {
                 fondo.ignoresSafeArea()
                 
+                // MARK: - Mascota blur de fondo
+                Image(deporte.imagenMascota)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width * 1.4, height: geo.size.height * 0.8)
+                    .clipped()
+                    .blur(radius: 50)
+                    .opacity(0.25)
+                    .offset(y: 60)
+                    .ignoresSafeArea()
+                
                 VStack(spacing: 0) {
                     
                     Spacer()
                     
                     // MARK: - Header
                     Text("DEPORTE ESTRELLA")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .tracking(4)
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .tracking(5)
                         .foregroundColor(.white.opacity(0.3))
                         .opacity(aparecer ? 1 : 0)
                     
-                    Spacer().frame(height: 16)
-                    
-                    // MARK: - Emoji grande
-                    Text(deporte.emoji)
-                        .font(.system(size: 72))
-                        .scaleEffect(aparecer ? 1 : 0.3)
-                        .opacity(aparecer ? 1 : 0)
-                    
-                    Spacer().frame(height: 12)
+                    Spacer().frame(height: 14)
                     
                     // MARK: - Nombre del deporte
                     Text(deporte.nombre)
-                        .font(.system(size: 36, weight: .heavy, design: .rounded))
+                        .font(.system(size: 34, weight: .heavy, design: .rounded))
                         .foregroundColor(.white)
                         .opacity(aparecer ? 1 : 0)
                     
                     Text(deporte.mensaje)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
-                        .foregroundColor(deporte.color.opacity(0.8))
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundColor(deporte.color.opacity(0.7))
                         .padding(.top, 2)
                         .opacity(aparecer ? 1 : 0)
                     
-                    Spacer().frame(height: 36)
+                    Spacer().frame(height: 20)
                     
-                    // MARK: - Tarjetas de stats por deporte
-                    VStack(spacing: 12) {
-                        // Fila 1: Métrica principal + secundaria
-                        HStack(spacing: 12) {
+                    // MARK: - Mascota hero
+                    Image(deporte.imagenMascota)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 180)
+                        .scaleEffect(aparecer ? 1 : 0.4)
+                        .opacity(aparecer ? 1 : 0)
+                    
+                    Spacer().frame(height: 24)
+                    
+                    // MARK: - Tarjetas de stats
+                    VStack(spacing: 10) {
+                        // Fila 1: Métricas principales
+                        HStack(spacing: 10) {
                             statCard(
-                                emoji: deporte.emoji,
                                 valor: deporte.metricaPrincipal,
                                 etiqueta: deporte.unidadPrincipal,
                                 color: deporte.color
@@ -66,7 +78,6 @@ struct RecapSlide2View: View {
                             
                             if !deporte.metricaSecundaria.isEmpty {
                                 statCard(
-                                    emoji: "🏅",
                                     valor: deporte.metricaSecundaria,
                                     etiqueta: deporte.unidadSecundaria,
                                     color: .yellow
@@ -75,21 +86,21 @@ struct RecapSlide2View: View {
                         }
                         
                         // Fila 2: Stats complementarias
-                        HStack(spacing: 12) {
-                            if viewModel.metrosNatacion > 0 {
-                                miniStat(emoji: "🏊", valor: "\(viewModel.sesionesNado)", etiqueta: "sesiones de nado")
+                        HStack(spacing: 10) {
+                            if viewModel.sesionesNado > 0 {
+                                miniStat(valor: "\(viewModel.sesionesNado)", etiqueta: "sesiones nado")
                             }
                             
-                            if viewModel.kmTotales > 0 {
-                                miniStat(emoji: "⛰️", valor: String(format: "%.0f", viewModel.elevacion), etiqueta: "m de elevación")
+                            if viewModel.elevacion > 0 {
+                                miniStat(valor: String(format: "%.0f", viewModel.elevacion), etiqueta: "m elevación")
                             }
                             
-                            miniStat(emoji: "🔥", valor: viewModel.caloriasFormateadas, etiqueta: "kcal quemadas")
+                            miniStat(valor: viewModel.caloriasFormateadas, etiqueta: "kcal")
                         }
                     }
                     .padding(.horizontal, 20)
                     .opacity(aparecer ? 1 : 0)
-                    .offset(y: aparecer ? 0 : 25)
+                    .offset(y: aparecer ? 0 : 20)
                     
                     Spacer()
                     
@@ -97,15 +108,15 @@ struct RecapSlide2View: View {
                     if viewModel.rachaActual > 0 {
                         HStack(spacing: 6) {
                             Text("⚡")
-                                .font(.system(size: 14))
+                                .font(.system(size: 13))
                             Text("\(viewModel.rachaActual) días de racha")
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.3))
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundColor(.white.opacity(0.25))
                         }
                         .opacity(aparecer ? 1 : 0)
                     }
                     
-                    Spacer().frame(height: 24)
+                    Spacer().frame(height: 20)
                 }
             }
         }
@@ -116,56 +127,51 @@ struct RecapSlide2View: View {
         }
     }
     
-    // MARK: - Stat Card grande
-    private func statCard(emoji: String, valor: String, etiqueta: String, color: Color) -> some View {
-        VStack(spacing: 8) {
-            Text(emoji)
-                .font(.system(size: 24))
-            
+    // MARK: - Stat Card
+    private func statCard(valor: String, etiqueta: String, color: Color) -> some View {
+        VStack(spacing: 6) {
             Text(valor)
-                .font(.system(size: 26, weight: .black, design: .rounded))
+                .font(.system(size: 24, weight: .black, design: .rounded))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             
             Text(etiqueta)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(.system(size: 11, weight: .medium, design: .rounded))
                 .foregroundColor(.white.opacity(0.35))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 18)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(color.opacity(0.08))
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(.ultraThinMaterial.opacity(0.4))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .stroke(color.opacity(0.15), lineWidth: 1)
                 )
         )
     }
     
     // MARK: - Mini stat
-    private func miniStat(emoji: String, valor: String, etiqueta: String) -> some View {
-        VStack(spacing: 4) {
-            Text(emoji)
-                .font(.system(size: 16))
+    private func miniStat(valor: String, etiqueta: String) -> some View {
+        VStack(spacing: 3) {
             Text(valor)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(.system(size: 15, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             Text(etiqueta)
-                .font(.system(size: 10, weight: .medium, design: .rounded))
+                .font(.system(size: 9, weight: .medium, design: .rounded))
                 .foregroundColor(.white.opacity(0.25))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
+        .padding(.vertical, 12)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(.white.opacity(0.04))
         )
     }
