@@ -47,6 +47,15 @@ struct PerfilView: View {
                 }
             }
             .navigationTitle("Mi Perfil")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { vm.prepararEdicion() }) {
+                        Text("Editar")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundColor(.aidaAcento)
+                    }
+                }
+            }
             .sheet(isPresented: $vm.mostrarEditorPerfil) {
                 EditorPerfilView(vm: vm)
             }
@@ -330,13 +339,7 @@ struct PerfilView: View {
             }
             .buttonStyle(.plain)
             
-            BotonPerfilAccion(
-                titulo: "Editar perfil",
-                icono: "person.crop.circle",
-                color: .coralEnergetico,
-                accion: { vm.prepararEdicion() }
-            )
-            
+
             BotonPerfilAccion(
                 titulo: "Sobre AIda",
                 icono: "sparkles",
