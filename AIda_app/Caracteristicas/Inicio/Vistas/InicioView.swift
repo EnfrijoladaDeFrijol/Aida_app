@@ -7,24 +7,36 @@ struct InicioView: View {
     
     private let timerCarrusel = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
+    // Color dinámico según ánimo (como PerfilView)
+    private var colorAnimo: Color {
+        vm.animoDelDia?.colorAsociado ?? .coralEnergetico
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.white.ignoresSafeArea()
+                // MARK: - Fondo reactivo al ánimo
+                LinearGradient(
+                    colors: [colorAnimo.opacity(0.12), .white],
+                    startPoint: .topLeading,
+                    endPoint: .center
+                )
+                .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.6), value: vm.animoDelDia)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 18) {
                         
-                        // ── 1. MASCOTA + FRASE (arriba) ──
-                        heroSection
-                        
-                        // ── 2. BOTONES (ánimo grande + rutinas/dieta) ──
+                        // ── 1. BOTONES (arriba) ──
                         botonesAccion
+                        
+                        // ── 2. MASCOTA + FRASE (en medio) ──
+                        heroSection
                         
                         // ── 3. RACHA EN GRANDE ──
                         rachaGrande
                         
-                        // ── 4. NOTICIAS (abajo, más altas) ──
+                        // ── 4. NOTICIAS (abajo) ──
                         carruselNoticias
                         
                     }
@@ -54,36 +66,144 @@ struct InicioView: View {
         }
     }
     
-    // MARK: - 1. Hero: GIF + Frase
+    // MARK: - 1. Botones arriba
+    private var botonesAccion: some View {
+        VStack(spacing: 10) {
+            // Ánimo — full width, colores claros
+            Button(action: { vm.mostrarRegistroAnimo = true }) {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(colorAnimo.opacity(0.2))
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: animoIcono)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(colorAnimo)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(animoTitulo)
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundColor(.grisPizarra)
+                        
+                        Text(animoSubtitulo)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.gray.opacity(0.3))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(colorAnimo.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(colorAnimo.opacity(0.12), lineWidth: 1)
+                        )
+                )
+            }
+            .buttonStyle(.plain)
+            .animation(.easeInOut(duration: 0.4), value: vm.animoDelDia)
+            
+            // Rutinas + Dieta
+            HStack(spacing: 10) {
+                NavigationLink(destination: MisRutinasView()) {
+                    botonAccesoSuave(
+                        icono: "dumbbell.fill",
+                        titulo: "Mis Rutinas",
+                        subtitulo: "Guardadas",
+                        color: .coralEnergetico
+                    )
+                }
+                .buttonStyle(.plain)
+                
+                NavigationLink(destination: MiDietaView()) {
+                    botonAccesoSuave(
+                        icono: "leaf.fill",
+                        titulo: "Mi Dieta",
+                        subtitulo: "Plan actual",
+                        color: .greenMint
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+    
+    // MARK: - Botón acceso suave (colores claros, no contrastan tanto)
+    private func botonAccesoSuave(icono: String, titulo: String, subtitulo: String, color: Color) -> some View {
+        VStack(spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(color.opacity(0.15))
+                    .frame(width: 42, height: 42)
+                
+                Image(systemName: icono)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(color)
+            }
+            
+            VStack(spacing: 2) {
+                Text(titulo)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(.grisPizarra)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                Text(subtitulo)
+                    .font(.system(size: 11, weight: .regular, design: .rounded))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(color.opacity(0.06))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(color.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+    
+    // MARK: - 2. Hero: GIF + Frase (entre botones y racha)
     private var heroSection: some View {
         ZStack {
-            // Orbes de color
             ZStack {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.coralEnergetico.opacity(0.06), .clear],
+                            colors: [colorAnimo.opacity(0.05), .clear],
                             center: .center,
                             startRadius: 20,
-                            endRadius: 150
+                            endRadius: 140
                         )
                     )
-                    .frame(width: 300, height: 300)
-                    .offset(x: -30, y: 0)
+                    .frame(width: 280, height: 280)
+                    .offset(x: -20, y: 0)
                 
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.magentaProfundo.opacity(0.04), .clear],
+                            colors: [.magentaProfundo.opacity(0.03), .clear],
                             center: .center,
                             startRadius: 10,
-                            endRadius: 120
+                            endRadius: 110
                         )
                     )
-                    .frame(width: 240, height: 240)
+                    .frame(width: 220, height: 220)
                     .offset(x: 40, y: 20)
             }
-            .blur(radius: 20)
+            .blur(radius: 18)
             .scaleEffect(animarEntrada ? 1.0 : 0.8)
             .opacity(animarEntrada ? 1.0 : 0)
             
@@ -103,98 +223,19 @@ struct InicioView: View {
                     
                     HStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.coralEnergetico.opacity(0.35))
+                            .fill(colorAnimo.opacity(0.35))
                             .frame(width: 18, height: 1.5)
                         Image(systemName: "sparkle")
                             .font(.system(size: 7))
                         Text("AIda")
                             .font(.system(size: 10, weight: .medium, design: .serif))
                     }
-                    .foregroundColor(.coralEnergetico.opacity(0.6))
+                    .foregroundColor(colorAnimo.opacity(0.6))
                 }
                 .opacity(animarEntrada ? 1.0 : 0)
                 .offset(y: animarEntrada ? 0 : 10)
             }
             .padding(.vertical, 4)
-        }
-    }
-    
-    // MARK: - 2. Botones de Acción
-    private var botonesAccion: some View {
-        VStack(spacing: 12) {
-            // Botón de ánimo — GRANDE, ancho completo
-            Button(action: { vm.mostrarRegistroAnimo = true }) {
-                HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: animoColoresGradiente,
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 50, height: 50)
-                        
-                        Image(systemName: animoIcono)
-                            .font(.system(size: 22, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(animoTitulo)
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        
-                        Text(animoSubtitulo)
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                            .foregroundColor(.white.opacity(0.7))
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white.opacity(0.4))
-                }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: animoFondoGradiente,
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .shadow(color: animoSombra.opacity(0.25), radius: 12, x: 0, y: 6)
-                )
-            }
-            .buttonStyle(.plain)
-            
-            // Rutinas + Dieta — fila de 2
-            HStack(spacing: 12) {
-                NavigationLink(destination: MisRutinasView()) {
-                    BotonAccesoColor(
-                        icono: "dumbbell.fill",
-                        titulo: "Mis Rutinas",
-                        subtitulo: "Guardadas",
-                        coloresGradiente: [.coralEnergetico, .magentaProfundo]
-                    )
-                }
-                .buttonStyle(.plain)
-                
-                NavigationLink(destination: MiDietaView()) {
-                    BotonAccesoColor(
-                        icono: "leaf.fill",
-                        titulo: "Mi Dieta",
-                        subtitulo: "Plan actual",
-                        coloresGradiente: [Color.greenMint, Color.green.opacity(0.7)]
-                    )
-                }
-                .buttonStyle(.plain)
-            }
         }
     }
     
@@ -242,7 +283,7 @@ struct InicioView: View {
         .padding(.vertical, 24)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(white: 0.975))
+                .fill(.white.opacity(0.8))
                 .shadow(color: .black.opacity(0.02), radius: 10, x: 0, y: 4)
         )
         .overlay(
@@ -251,13 +292,13 @@ struct InicioView: View {
         )
     }
     
-    // MARK: - 4. Carrusel Noticias (más alto)
+    // MARK: - 4. Carrusel Noticias
     private var carruselNoticias: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .font(.system(size: 12))
-                    .foregroundColor(.coralEnergetico.opacity(0.6))
+                    .foregroundColor(colorAnimo.opacity(0.6))
                 Text("Tips & Datos")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundColor(.gray)
@@ -269,7 +310,7 @@ struct InicioView: View {
                 HStack(spacing: 4) {
                     ForEach(0..<noticiasYTips.count, id: \.self) { i in
                         Circle()
-                            .fill(carruselIndex == i ? Color.coralEnergetico.opacity(0.6) : Color.gray.opacity(0.15))
+                            .fill(carruselIndex == i ? colorAnimo.opacity(0.5) : Color.gray.opacity(0.15))
                             .frame(width: 5, height: 5)
                     }
                 }
@@ -287,7 +328,6 @@ struct InicioView: View {
         }
     }
     
-    // MARK: - Tarjeta de noticia (más grande)
     private func tarjetaNoticia(_ noticia: NoticiaFitness) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 14) {
@@ -336,7 +376,7 @@ struct InicioView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(Color(white: 0.975))
+                .fill(.white.opacity(0.85))
                 .shadow(color: .black.opacity(0.03), radius: 10, x: 0, y: 4)
         )
         .overlay(
@@ -350,25 +390,13 @@ struct InicioView: View {
         vm.animoDelDia?.icono ?? "face.smiling"
     }
     private var animoTitulo: String {
-        vm.animoDelDia != nil ? "Te sientes \(vm.animoDelDia!.rawValue)" : "¿Cómo te sientes hoy?"
+        if let animo = vm.animoDelDia {
+            return "Te sientes \(animo.rawValue)"
+        }
+        return "¿Cómo te sientes hoy?"
     }
     private var animoSubtitulo: String {
         vm.animoDelDia != nil ? "Toca para cambiar" : "Registra tu ánimo"
-    }
-    private var animoColoresGradiente: [Color] {
-        if let animo = vm.animoDelDia {
-            return [animo.colorAsociado.opacity(0.9), animo.colorAsociado]
-        }
-        return [.orange, .coralEnergetico]
-    }
-    private var animoFondoGradiente: [Color] {
-        if let animo = vm.animoDelDia {
-            return [animo.colorAsociado.opacity(0.85), animo.colorAsociado]
-        }
-        return [.coralEnergetico.opacity(0.9), .magentaProfundo.opacity(0.85)]
-    }
-    private var animoSombra: Color {
-        vm.animoDelDia?.colorAsociado ?? .coralEnergetico
     }
     
     // MARK: - Frase del Día
@@ -386,7 +414,7 @@ struct InicioView: View {
         return frases[diaDelAno % frases.count]
     }
     
-    // MARK: - Noticias
+    // MARK: - Datos Noticias
     private var noticiasYTips: [NoticiaFitness] {
         [
             NoticiaFitness(
@@ -428,7 +456,8 @@ struct InicioView: View {
     }
 }
 
-// MARK: - Modelo de Noticia
+// MARK: - Modelos auxiliares
+
 struct NoticiaFitness {
     let icono: String
     let categoria: String
@@ -437,50 +466,7 @@ struct NoticiaFitness {
     let colores: [Color]
 }
 
-// MARK: - BotonAccesoColor (con gradiente de fondo, texto blanco, resalta del fondo)
-struct BotonAccesoColor: View {
-    let icono: String
-    let titulo: String
-    let subtitulo: String
-    let coloresGradiente: [Color]
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icono)
-                .font(.system(size: 24, weight: .semibold))
-                .foregroundColor(.white)
-            
-            VStack(spacing: 2) {
-                Text(titulo)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                
-                Text(subtitulo)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.7))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: coloresGradiente,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .shadow(color: coloresGradiente.first?.opacity(0.25) ?? .clear, radius: 10, x: 0, y: 5)
-        )
-    }
-}
-
-// MARK: - BotonAcceso legacy (por si se referencia en otro lado)
+// MARK: - BotonAcceso legacy (referenciado en otros archivos)
 struct BotonAcceso: View {
     let icono: String
     let titulo: String
@@ -489,6 +475,56 @@ struct BotonAcceso: View {
     
     var body: some View {
         BotonAccesoColor(icono: icono, titulo: titulo, subtitulo: subtitulo, coloresGradiente: coloresGradiente)
+    }
+}
+
+struct BotonAccesoColor: View {
+    let icono: String
+    let titulo: String
+    let subtitulo: String
+    let coloresGradiente: [Color]
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: coloresGradiente.map { $0.opacity(0.15) },
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 42, height: 42)
+                
+                Image(systemName: icono)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(coloresGradiente.first ?? .gray)
+            }
+            
+            VStack(spacing: 2) {
+                Text(titulo)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(.grisPizarra)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                Text(subtitulo)
+                    .font(.system(size: 11, weight: .regular, design: .rounded))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(coloresGradiente.first?.opacity(0.06) ?? .clear)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(coloresGradiente.first?.opacity(0.1) ?? .clear, lineWidth: 1)
+                )
+        )
     }
 }
 
