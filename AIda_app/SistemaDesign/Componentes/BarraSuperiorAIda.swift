@@ -16,18 +16,11 @@ struct BarraSuperiorAIda: View {
                 .frame(width: 28, height: 28)
             
             // Nombre de la app
-            Text("Aida")
+            Text("AIda")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundColor(.grisPizarra)
             
             Spacer()
-            
-            // Lupa
-            Button(action: {}) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.grisPizarra)
-            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)

@@ -33,7 +33,7 @@ class RutinaViewModel {
     var perfil = PerfilEntrenamiento()
     
     // Total de pasos en el cuestionario
-    let totalPasos = 4
+    let totalPasos = 5
     
     // MARK: - Resultado
     // La rutina generada por Gemini
@@ -47,26 +47,58 @@ class RutinaViewModel {
     
     // MARK: - Propiedades Calculadas
     
+    // Opciones dinámicas para el objetivo
+    var opcionesObjetivo: [ObjetivoFitness] {
+        switch perfil.tipoEjercicio {
+        case .natacion:
+            return [.mejorarTecnica, .resistenciaCardio, .ganarVelocidad, .relajacion]
+        case .running:
+            return [.prepararseCarrera, .mejorarRitmo, .bajarPeso, .resistenciaCardio]
+        case .normal, .none:
+            return [.ganarMusculo, .bajarPeso, .mantenerse, .flexibilidad]
+        }
+    }
+    
+    // Opciones dinámicas para el equipo / terreno
+    var opcionesEquipo: [EquipoDisponible] {
+        switch perfil.tipoEjercicio {
+        case .natacion:
+            return [.soloGoggles, .tablaPullBuoy, .aletasPaletas]
+        case .running:
+            return [.asfalto, .cintaCorrer, .pistaTrail]
+        case .normal, .none:
+            return [.sinEquipo, .mancuernas, .gymCompleto]
+        }
+    }
+    
     var progresoCuestionario: Double {
         Double(pasoActual + 1) / Double(totalPasos)
     }
     
     var tituloPasoActual: String {
         switch pasoActual {
-        case 0: return "¿Cuál es tu objetivo?"
-        case 1: return "¿Cuál es tu nivel?"
-        case 2: return "¿Cuánto tiempo tienes?"
-        case 3: return "¿Qué equipo tienes?"
+        case 0: return "¿Qué tipo de ejercicio harás?"
+        case 1: return "¿Cuál es tu objetivo?"
+        case 2: return "¿Cuál es tu nivel?"
+        case 3: return "¿Cuánto tiempo tienes?"
+        case 4: 
+            if perfil.tipoEjercicio == .running { return "¿Dónde vas a correr?" }
+            if perfil.tipoEjercicio == .natacion { return "¿Qué accesorios tienes?" }
+            return "¿Qué equipo tienes?"
         default: return ""
         }
     }
     
     var subtituloPasoActual: String {
         switch pasoActual {
-        case 0: return "Elige lo que mejor describe tu meta"
-        case 1: return "Sé honesto, ¡no hay respuesta incorrecta!"
-        case 2: return "Adaptaremos la rutina a tu tiempo"
-        case 3: return "Usaremos lo que tengas disponible"
+        case 0: return "Elige entre natación, running o ejercicio normal"
+        case 1: return "Elige lo que mejor describe tu meta"
+        case 2: return "Sé honesto, ¡no hay respuesta incorrecta!"
+        case 3: return "Adaptaremos la rutina a tu tiempo"
+        case 4: 
+            if perfil.tipoEjercicio == .running { return "El terreno cambiará tu entrenamiento" }
+            if perfil.tipoEjercicio == .natacion { return "Usaremos los accesorios que tengas" }
+            return "Usaremos lo que tengas disponible"
         default: return ""
         }
     }
@@ -74,10 +106,11 @@ class RutinaViewModel {
     // ¿Puede avanzar al siguiente paso? (ya seleccionó algo)
     var puedeAvanzar: Bool {
         switch pasoActual {
-        case 0: return perfil.objetivo != nil
-        case 1: return perfil.nivel != nil
-        case 2: return perfil.duracion != nil
-        case 3: return perfil.equipo != nil
+        case 0: return perfil.tipoEjercicio != nil
+        case 1: return perfil.objetivo != nil
+        case 2: return perfil.nivel != nil
+        case 3: return perfil.duracion != nil
+        case 4: return perfil.equipo != nil
         default: return false
         }
     }

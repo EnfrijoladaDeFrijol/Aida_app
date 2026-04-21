@@ -7,12 +7,46 @@ import SwiftUI
 // Cada "enum" es una pregunta con opciones fijas.
 // Usamos enums porque Swift los hace seguros: no puedes tener un valor inválido.
 
+// MARK: - Pregunta 0: ¿Qué tipo de ejercicio harás hoy?
+enum TipoEjercicio: String, CaseIterable, Identifiable, Codable {
+    case natacion = "Natación"
+    case running = "Running"
+    case normal = "Ejercicio normal"
+    
+    var id: String { self.rawValue }
+    
+    var icono: String {
+        switch self {
+        case .natacion: return "figure.pool.swim"
+        case .running: return "figure.run"
+        case .normal: return "figure.cross.training"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .natacion: return .cyan
+        case .running: return .greenMint
+        case .normal: return .coralEnergetico
+        }
+    }
+}
+
 // MARK: - Pregunta 1: ¿Cuál es tu objetivo?
 enum ObjetivoFitness: String, CaseIterable, Identifiable, Codable {
+    // Normal
     case ganarMusculo = "Ganar músculo"
     case bajarPeso = "Bajar de peso"
     case mantenerse = "Mantenerse en forma"
     case flexibilidad = "Mejorar flexibilidad"
+    
+    // Natacion / Running
+    case mejorarTecnica = "Mejorar técnica"
+    case resistenciaCardio = "Resistencia cardio"
+    case ganarVelocidad = "Ganar velocidad"
+    case relajacion = "Relajación activa"
+    case prepararseCarrera = "Preparar carrera (5k/10k)"
+    case mejorarRitmo = "Mejorar ritmo"
     
     // "id" es necesario para que SwiftUI pueda usar este enum en listas/ForEach
     var id: String { self.rawValue }
@@ -24,16 +58,23 @@ enum ObjetivoFitness: String, CaseIterable, Identifiable, Codable {
         case .bajarPeso: return "flame.fill"
         case .mantenerse: return "heart.fill"
         case .flexibilidad: return "figure.flexibility"
+        case .mejorarTecnica: return "figure.pool.swim"
+        case .resistenciaCardio: return "heart.text.square.fill"
+        case .ganarVelocidad: return "bolt.fill"
+        case .relajacion: return "water.waves"
+        case .prepararseCarrera: return "medal.fill"
+        case .mejorarRitmo: return "timer"
         }
     }
     
     // Color asociado para hacer la UI más visual
     var color: Color {
         switch self {
-        case .ganarMusculo: return .coralEnergetico
-        case .bajarPeso: return .orange
-        case .mantenerse: return .greenMint
-        case .flexibilidad: return .cyan
+        case .ganarMusculo, .ganarVelocidad: return .coralEnergetico
+        case .bajarPeso, .mejorarRitmo: return .orange
+        case .mantenerse, .resistenciaCardio: return .greenMint
+        case .flexibilidad, .mejorarTecnica, .relajacion: return .cyan
+        case .prepararseCarrera: return .magentaProfundo
         }
     }
 }
@@ -86,25 +127,39 @@ enum DuracionRutina: String, CaseIterable, Identifiable, Codable {
 
 // MARK: - Pregunta 4: ¿Qué equipo tienes disponible?
 enum EquipoDisponible: String, CaseIterable, Identifiable, Codable {
+    // Normal
     case sinEquipo = "Sin equipo"
     case mancuernas = "Mancuernas"
     case gymCompleto = "Gym completo"
+    // Natacion
+    case soloGoggles = "Solo goggles"
+    case tablaPullBuoy = "Tabla y Pull Buoy"
+    case aletasPaletas = "Aletas y Paletas"
+    // Running
+    case asfalto = "Asfalto / Calle"
+    case cintaCorrer = "Cinta de correr"
+    case pistaTrail = "Pista / Naturaleza"
     
     var id: String { self.rawValue }
     
     var icono: String {
         switch self {
-        case .sinEquipo: return "figure.stand"
+        case .sinEquipo, .soloGoggles: return "figure.stand"
         case .mancuernas: return "dumbbell.fill"
         case .gymCompleto: return "building.2.fill"
+        case .tablaPullBuoy: return "rectangle.roundedbottom.fill"
+        case .aletasPaletas: return "water.waves.and.arrow.up"
+        case .asfalto: return "road.lanes"
+        case .cintaCorrer: return "figure.run.treadmill"
+        case .pistaTrail: return "leaf.fill"
         }
     }
     
     var color: Color {
         switch self {
-        case .sinEquipo: return .greenMint
-        case .mancuernas: return .orange
-        case .gymCompleto: return .coralEnergetico
+        case .sinEquipo, .soloGoggles, .pistaTrail: return .greenMint
+        case .mancuernas, .tablaPullBuoy, .asfalto: return .orange
+        case .gymCompleto, .aletasPaletas, .cintaCorrer: return .coralEnergetico
         }
     }
 }
@@ -114,6 +169,7 @@ enum EquipoDisponible: String, CaseIterable, Identifiable, Codable {
 // Cuando el usuario termine de contestar, empaquetamos todo aquí
 // y se lo enviamos a Gemini para que genere la rutina.
 struct PerfilEntrenamiento {
+    var tipoEjercicio: TipoEjercicio?
     var objetivo: ObjetivoFitness?
     var nivel: NivelExperiencia?
     var duracion: DuracionRutina?
@@ -122,12 +178,13 @@ struct PerfilEntrenamiento {
     
     // Verifica que el usuario haya contestado TODO antes de generar
     var estaCompleto: Bool {
-        objetivo != nil && nivel != nil && duracion != nil && equipo != nil
+        tipoEjercicio != nil && objetivo != nil && nivel != nil && duracion != nil && equipo != nil
     }
     
     // Convierte las respuestas en texto para enviar a Gemini
     var descripcionParaIA: String {
         """
+        Tipo de Ejercicio: \(tipoEjercicio?.rawValue ?? "No especificado")
         Objetivo: \(objetivo?.rawValue ?? "No especificado")
         Nivel de experiencia: \(nivel?.rawValue ?? "No especificado")
         Duración disponible: \(duracion?.rawValue ?? "No especificado")

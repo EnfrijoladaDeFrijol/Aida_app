@@ -29,6 +29,11 @@ struct RutinaResultadoView: View {
                         }
                     }
                     
+                    // --- DIETA SUGERIDA ---
+                    if let dieta = rutina.dieta {
+                        tarjetaDieta(dieta)
+                    }
+                    
                     // --- BOTONES DE ACCIÓN ---
                     botonesAccion
                 }

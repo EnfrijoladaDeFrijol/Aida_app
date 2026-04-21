@@ -134,35 +134,7 @@ struct DetalleRutinaGuardadaView: View {
                     .padding(.horizontal)
                 }
                 
-                // Dieta si existe
-                if let dieta = rutina.dieta {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Dieta Sugerida")
-                            .font(.aidaSubtitulo)
-                            .foregroundColor(.coralEnergetico)
-                        
-                        Text(dieta.descripcion)
-                            .font(.aidaCuerpo)
-                            .foregroundColor(.gray)
-                        
-                        ForEach(dieta.comidas) { comida in
-                            VStack(alignment: .leading) {
-                                Text(comida.tipo)
-                                    .font(.aidaCuerpoDestacado)
-                                Text(comida.sugerencia)
-                                    .font(.aidaCuerpo)
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.vertical, 4)
-                            Divider()
-                        }
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                    .padding(.horizontal)
-                }
+
             }
             .padding(.bottom, 30)
         }

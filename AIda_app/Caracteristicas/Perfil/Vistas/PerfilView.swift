@@ -283,7 +283,7 @@ struct PerfilView: View {
                         .background(Capsule().fill(vm.perfil.colorIMC))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                .frame(height: 110)
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(Color.white)
@@ -305,41 +305,6 @@ struct PerfilView: View {
     // MARK: - Acciones
     private var seccionAcciones: some View {
         VStack(spacing: 12) {
-            
-            NavigationLink(destination: ProgresoView()) {
-                HStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color.purple.opacity(0.12))
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "photo.stack")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.purple)
-                    }
-                    
-                    Text("Timeline de Progreso")
-                        .font(.aidaCuerpo)
-                        .foregroundColor(.grisPizarra)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.gray.opacity(0.4))
-                }
-                .padding(14)
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.6), lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
-            
-
             BotonPerfilAccion(
                 titulo: "Sobre AIda",
                 icono: "sparkles",
@@ -427,7 +392,7 @@ struct DatoCorporalMini: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
+        .frame(height: 110)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white)

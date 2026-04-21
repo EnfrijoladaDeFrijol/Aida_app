@@ -2,12 +2,15 @@ import SwiftUI
 
 struct MiDietaView: View {
     @ObservedObject private var gestorRutinas = GestorRutinas.compartido
+    @State private var rutinaSeleccionadaId: String? = nil
     
     var body: some View {
+        let rutinasConDieta = gestorRutinas.rutinasGuardadas.filter { $0.dieta != nil }
+        
         ZStack {
             Color.aidaFondo.edgesIgnoringSafeArea(.all)
             
-            if gestorRutinas.rutinasGuardadas.isEmpty {
+            if rutinasConDieta.isEmpty {
                 VStack(spacing: 20) {
                     Image(systemName: "fork.knife.circle.fill")
                         .font(.system(size: 80))
@@ -24,9 +27,34 @@ struct MiDietaView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Iterar por las dietas de las rutinas guardadas, o solo mostrar la primera (más reciente)
-                        // Aquí mostraremos la última rutina guardada que tenga dieta
-                        if let ultimaRutina = gestorRutinas.rutinasGuardadas.first, let dieta = ultimaRutina.dieta {
+                        // Selector de Rutina
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Selecciona una rutina")
+                                .font(.aidaCuerpoDestacado)
+                                .foregroundColor(.grisPizarra)
+                                .padding(.horizontal, 4)
+                            
+                            Picker("Rutina", selection: Binding(
+                                get: { rutinaSeleccionadaId ?? rutinasConDieta.first?.id },
+                                set: { rutinaSeleccionadaId = $0 }
+                            )) {
+                                ForEach(rutinasConDieta) { rutina in
+                                    Text(rutina.nombre).tag(Optional(rutina.id))
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .padding(8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+                        }
+                        .padding(.horizontal)
+                        
+                        // Mostrar dieta de la rutina seleccionada
+                        if let rutinaId = rutinaSeleccionadaId ?? rutinasConDieta.first?.id,
+                           let ultimaRutina = rutinasConDieta.first(where: { $0.id == rutinaId }),
+                           let dieta = ultimaRutina.dieta {
                             
                             VStack(alignment: .leading, spacing: 16) {
                                 Text("Dieta para: \(ultimaRutina.nombre)")

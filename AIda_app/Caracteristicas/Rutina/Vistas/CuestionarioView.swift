@@ -84,8 +84,28 @@ struct CuestionarioView: View {
     private var contenidoDelPaso: some View {
         switch vm.pasoActual {
         case 0:
+            // Tipo de ejercicio
+            ForEach(TipoEjercicio.allCases) { opcion in
+                TarjetaOpcion(
+                    titulo: opcion.rawValue,
+                    icono: opcion.icono,
+                    color: opcion.color,
+                    estaSeleccionada: vm.perfil.tipoEjercicio == opcion,
+                    accion: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            if vm.perfil.tipoEjercicio != opcion {
+                                vm.perfil.tipoEjercicio = opcion
+                                // Resetear campos que dependen del tipo de ejercicio
+                                vm.perfil.objetivo = nil
+                                vm.perfil.equipo = nil
+                            }
+                        }
+                    }
+                )
+            }
+        case 1:
             // Objetivo fitness
-            ForEach(ObjetivoFitness.allCases) { opcion in
+            ForEach(vm.opcionesObjetivo) { opcion in
                 TarjetaOpcion(
                     titulo: opcion.rawValue,
                     icono: opcion.icono,
@@ -98,7 +118,7 @@ struct CuestionarioView: View {
                     }
                 )
             }
-        case 1:
+        case 2:
             // Nivel de experiencia
             ForEach(NivelExperiencia.allCases) { opcion in
                 TarjetaOpcion(
@@ -113,7 +133,7 @@ struct CuestionarioView: View {
                     }
                 )
             }
-        case 2:
+        case 3:
             // Duración
             ForEach(DuracionRutina.allCases) { opcion in
                 TarjetaOpcion(
@@ -128,9 +148,9 @@ struct CuestionarioView: View {
                     }
                 )
             }
-        case 3:
+        case 4:
             // Equipo disponible
-            ForEach(EquipoDisponible.allCases) { opcion in
+            ForEach(vm.opcionesEquipo) { opcion in
                 TarjetaOpcion(
                     titulo: opcion.rawValue,
                     icono: opcion.icono,
