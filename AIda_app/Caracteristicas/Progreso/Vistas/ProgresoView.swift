@@ -5,6 +5,7 @@ import Charts
 struct ProgresoView: View {
     @StateObject private var viewModel = ProgresoViewModel()
     @Environment(\.modelContext) private var context
+    @State private var mostrarRecap = false
     
     let columnas = [
         GridItem(.flexible(), spacing: 16),
@@ -15,6 +16,9 @@ struct ProgresoView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
+                    // --- 0. Botón Recap Mensual ---
+                    BotonRecapMensual(accion: { mostrarRecap = true })
+
                     if let actual = viewModel.mesActual {
                         let historial = Array(viewModel.mesesAnteriores.prefix(3).reversed()) + [actual]
                         
@@ -105,6 +109,9 @@ struct ProgresoView: View {
             .background(Color.aidaFondo.ignoresSafeArea())
             .onAppear {
                 viewModel.inicializarDatos(context: context)
+            }
+            .fullScreenCover(isPresented: $mostrarRecap) {
+                RecapContenedorView()
             }
         }
     }
@@ -218,5 +225,84 @@ struct MiniGraficaView: View {
                 .fill(Color.aidaSuperficie)
                 .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
         )
+    }
+}
+
+// MARK: - Botón para acceder al Recap Mensual
+struct BotonRecapMensual: View {
+    let accion: () -> Void
+    
+    private let dorado = Color(red: 0.85, green: 0.70, blue: 0.35)
+    private let doradoClaro = Color(red: 0.95, green: 0.85, blue: 0.55)
+    private let azulOscuro = Color(red: 0.05, green: 0.08, blue: 0.18)
+    
+    @State private var brillar = false
+    
+    var body: some View {
+        Button(action: accion) {
+            HStack(spacing: 14) {
+                // Ícono con resplandor
+                ZStack {
+                    Circle()
+                        .fill(dorado.opacity(0.2))
+                        .frame(width: 48, height: 48)
+                    
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [doradoClaro, dorado],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                }
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Tu Recap Mensual")
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                    
+                    Text("Descubre tu resumen del mes ✨")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(dorado)
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [azulOscuro, azulOscuro.opacity(0.9)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [dorado.opacity(brillar ? 0.6 : 0.2), doradoClaro.opacity(brillar ? 0.4 : 0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: dorado.opacity(0.15), radius: 12, x: 0, y: 6)
+            )
+        }
+        .buttonStyle(EstiloBotonAIda())
+        .onAppear {
+            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                brillar = true
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 // MARK: - RegistroAnimoViewModel
 // Maneja la lógica de selección y guardado del estado de ánimo.
@@ -57,11 +58,41 @@ class RegistroAnimoViewModel {
         }
     }
     
-    /// Guarda el ánimo seleccionado y retorna true si se guardó exitosamente
-    func guardarAnimo() -> Bool {
+    /// Guarda el ánimo seleccionado y retorna true si se guardó exitosamente.
+    /// También actualiza el conteo de estados de ánimo en el RegistroMensual para el Recap.
+    func guardarAnimo(context: ModelContext? = nil) -> Bool {
         guard let animo = animoSeleccionado else { return false }
         UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+        
+        // Guardar en UserDefaults (comportamiento original)
+        let claveHoy = PerfilUsuario.claveParaFecha(Date())
+        let yaRegistradoHoy = UserDefaults.standard.string(forKey: claveHoy) != nil
+        
         UserDefaults.standard.set(animo.rawValue, forKey: "animoDelDia")
+        UserDefaults.standard.set(animo.rawValue, forKey: claveHoy)
+        
+        // Actualizar conteo mensual en RegistroMensual (para el Recap)
+        if let context = context, !yaRegistradoHoy {
+            actualizarConteoMensual(animo: animo, context: context)
+        }
+        
         return true
+    }
+    
+    /// Actualiza el conteoEstadosAnimo del RegistroMensual del mes actual
+    private func actualizarConteoMensual(animo: TipoAnimo, context: ModelContext) {
+        let calendar = Calendar.current
+        let inicioMes = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+        
+        let descriptor = FetchDescriptor<RegistroMensual>(sortBy: [SortDescriptor(\.mes, order: .reverse)])
+        guard let todos = try? context.fetch(descriptor) else { return }
+        
+        let registroActual = todos.first(where: { calendar.isDate($0.mes, equalTo: inicioMes, toGranularity: .month) })
+        
+        if let registro = registroActual {
+            let clave = animo.rawValue
+            registro.conteoEstadosAnimo[clave, default: 0] += 1
+            try? context.save()
+        }
     }
 }

@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct RegistroAnimoView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
     @State private var vm = RegistroAnimoViewModel()
     
     var body: some View {
@@ -54,7 +56,7 @@ struct RegistroAnimoView: View {
                 
                 // --- BOTÓN DE GUARDAR FLOTANTE ---
                 Button(action: {
-                    if vm.guardarAnimo() {
+                    if vm.guardarAnimo(context: context) {
                         dismiss()
                     }
                 }) {

@@ -34,7 +34,70 @@ class ProgresoViewModel: ObservableObject {
             self.mesActual = nuevo
         }
         
+        // Inyectar datos de ejemplo si el mes actual está vacío
+        if let actual = mesActual, registroEstaVacio(actual) {
+            inyectarDatosEjemplo(registro: actual, context: context)
+        }
+        
+        // Crear meses históricos de ejemplo si no hay historial
+        if mesesAnteriores.isEmpty {
+            crearHistorialEjemplo(context: context, mesActual: inicioMes)
+            // Re-fetch para poblar mesesAnteriores
+            let todosActualizados = (try? context.fetch(descriptor)) ?? []
+            mesesAnteriores = todosActualizados.filter { !calendar.isDate($0.mes, equalTo: inicioMes, toGranularity: .month) }
+        }
+        
         cargarHealthKit(context: context)
+    }
+    
+    private func registroEstaVacio(_ reg: RegistroMensual) -> Bool {
+        return reg.pasosTotales == 0
+            && reg.metrosTotales == 0
+            && reg.kmTotales == 0
+            && reg.tonelajeTotal == 0
+            && reg.caloriasActivas == 0
+    }
+    
+    private func inyectarDatosEjemplo(registro: RegistroMensual, context: ModelContext) {
+        registro.metrosTotales = 4800
+        registro.sesionesNado = 12
+        registro.kmTotales = 47.3
+        registro.elevacionGanada = 320
+        registro.tonelajeTotal = 18500
+        registro.ejercicioPR = "Sentadilla:120"
+        registro.pasosTotales = 186420
+        registro.caloriasActivas = 12340
+        registro.conteoEstadosAnimo = [
+            "Increíble": 8, "Bien": 12, "Normal": 5, "Cansado": 3, "Estresado": 2
+        ]
+        try? context.save()
+    }
+    
+    private func crearHistorialEjemplo(context: ModelContext, mesActual: Date) {
+        let calendar = Calendar.current
+        let datosHistoricos: [(mesesAtras: Int, metros: Double, sesiones: Int, km: Double, elev: Double, ton: Double, pasos: Int, cal: Double)] = [
+            (3, 2200, 6, 22.5, 140, 9800, 95000, 6200),
+            (2, 3400, 9, 35.0, 210, 14200, 142000, 9100),
+            (1, 4100, 11, 41.8, 280, 16800, 168000, 11000)
+        ]
+        
+        for dato in datosHistoricos {
+            if let fecha = calendar.date(byAdding: .month, value: -dato.mesesAtras, to: mesActual) {
+                let reg = RegistroMensual(
+                    mes: fecha,
+                    metrosTotales: dato.metros,
+                    sesionesNado: dato.sesiones,
+                    kmTotales: dato.km,
+                    elevacionGanada: dato.elev,
+                    tonelajeTotal: dato.ton,
+                    ejercicioPR: "Sentadilla:100",
+                    pasosTotales: dato.pasos,
+                    caloriasActivas: dato.cal
+                )
+                context.insert(reg)
+            }
+        }
+        try? context.save()
     }
     
     func cargarHealthKit(context: ModelContext) {
@@ -43,23 +106,31 @@ class ProgresoViewModel: ObservableObject {
             self.isAuthorized = true
             
             self.healthManager.fetchMonthlyData(for: .stepCount, unit: .count()) { pasos in
-                self.mesActual?.pasosTotales = Int(pasos)
-                try? context.save()
+                if pasos > 0 {
+                    self.mesActual?.pasosTotales = Int(pasos)
+                    try? context.save()
+                }
             }
             
             self.healthManager.fetchMonthlyData(for: .distanceWalkingRunning, unit: .meter()) { metros in
-                self.mesActual?.kmTotales = metros / 1000.0
-                try? context.save()
+                if metros > 0 {
+                    self.mesActual?.kmTotales = metros / 1000.0
+                    try? context.save()
+                }
             }
             
             self.healthManager.fetchMonthlyData(for: .distanceSwimming, unit: .meter()) { metros in
-                self.mesActual?.metrosTotales = metros
-                try? context.save()
+                if metros > 0 {
+                    self.mesActual?.metrosTotales = metros
+                    try? context.save()
+                }
             }
             
             self.healthManager.fetchMonthlyData(for: .activeEnergyBurned, unit: .kilocalorie()) { calorias in
-                self.mesActual?.caloriasActivas = calorias
-                try? context.save()
+                if calorias > 0 {
+                    self.mesActual?.caloriasActivas = calorias
+                    try? context.save()
+                }
             }
         }
     }

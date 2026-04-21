@@ -11,6 +11,7 @@ import SwiftUI
 struct PerfilView: View {
     @State private var vm = PerfilViewModel()
     @State private var animarEntrada = false
+    @State private var mostrarRecap = false
     
     var body: some View {
         NavigationStack {
@@ -58,6 +59,9 @@ struct PerfilView: View {
             }
             .sheet(isPresented: $vm.mostrarEditorPerfil) {
                 EditorPerfilView(vm: vm)
+            }
+            .fullScreenCover(isPresented: $mostrarRecap) {
+                RecapContenedorView()
             }
             .onAppear {
                 // Verificar si la racha se rompió
@@ -302,15 +306,41 @@ struct PerfilView: View {
         .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 5)
     }
     
-    // MARK: - Acciones
     private var seccionAcciones: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             BotonPerfilAccion(
                 titulo: "Sobre AIda",
                 icono: "sparkles",
                 color: .magentaProfundo,
                 accion: {}
             )
+            
+            // Botón de Recap destacado hasta abajo
+            Button(action: { mostrarRecap = true }) {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 20, weight: .bold))
+                    Text("Mi Recap Mensual")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                    Spacer()
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 18, weight: .semibold))
+                }
+                .foregroundColor(.black)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 20)
+                .background(
+                    LinearGradient(
+                        colors: [Color(red: 0.95, green: 0.85, blue: 0.55), Color(red: 0.85, green: 0.70, blue: 0.35)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: Color(red: 0.85, green: 0.70, blue: 0.35).opacity(0.4), radius: 10, x: 0, y: 5)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
             
             // Versión de la app
             Text("AIda v1.0 — Hecho con ❤️")
