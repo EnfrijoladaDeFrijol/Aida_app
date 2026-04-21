@@ -3,7 +3,7 @@ import SwiftData
 
 // MARK: - RecapContenedorView
 // Contenedor principal del Recap Mensual.
-// Fondo oscuro premium, paginación horizontal, botón para compartir.
+// Fondo oscuro uniforme, paginación horizontal, botón compartir.
 
 struct RecapContenedorView: View {
     @Environment(\.modelContext) private var context
@@ -15,28 +15,27 @@ struct RecapContenedorView: View {
     @State private var imagenExportar: UIImage?
     @State private var exportando = false
     
-    private let fondo = Color(red: 0.06, green: 0.06, blue: 0.10)
+    static let fondo = Color(red: 0.07, green: 0.07, blue: 0.11)
     
     var body: some View {
         ZStack {
-            fondo.ignoresSafeArea()
+            Self.fondo.ignoresSafeArea()
             
             if viewModel.isReady {
                 VStack(spacing: 0) {
                     
-                    // MARK: - Header mínimo
+                    // MARK: - Header
                     HStack {
                         Button(action: { dismiss() }) {
                             Image(systemName: "xmark")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(.white.opacity(0.4))
-                                .frame(width: 36, height: 36)
+                                .frame(width: 34, height: 34)
                                 .background(Circle().fill(.white.opacity(0.08)))
                         }
                         
                         Spacer()
                         
-                        // Indicadores
                         HStack(spacing: 6) {
                             ForEach(0..<3, id: \.self) { index in
                                 Capsule()
@@ -48,55 +47,47 @@ struct RecapContenedorView: View {
                         
                         Spacer()
                         
-                        // Compartir
                         Button(action: { exportarSlideActual() }) {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.white.opacity(0.4))
-                                .frame(width: 36, height: 36)
+                                .frame(width: 34, height: 34)
                                 .background(Circle().fill(.white.opacity(0.08)))
                         }
                         .disabled(exportando)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
                     
                     // MARK: - Slides
                     TabView(selection: $paginaActual) {
                         RecapSlide1View(viewModel: viewModel)
                             .tag(0)
-                        
                         RecapSlide2View(viewModel: viewModel)
                             .tag(1)
-                        
                         RecapSlide3View(viewModel: viewModel)
                             .tag(2)
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.easeInOut(duration: 0.3), value: paginaActual)
                     
-                    // MARK: - Footer: Guardar
+                    // MARK: - Footer
                     Button(action: { exportarTodasLasSlides() }) {
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.down.circle.fill")
-                                .font(.system(size: 18, weight: .bold))
-                            
+                                .font(.system(size: 16, weight: .bold))
                             Text("Guardar Recap")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                         }
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            Capsule().fill(.white)
-                        )
+                        .padding(.vertical, 13)
+                        .background(Capsule().fill(.white))
                     }
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 12)
                     .padding(.top, 4)
                     .disabled(exportando)
-                    
                 }
             } else {
                 VStack(spacing: 12) {
@@ -118,7 +109,6 @@ struct RecapContenedorView: View {
         }
     }
     
-    // MARK: - Exportar slide actual como imagen
     @MainActor
     private func exportarSlideActual() {
         exportando = true
@@ -132,7 +122,6 @@ struct RecapContenedorView: View {
         exportando = false
     }
     
-    // MARK: - Exportar todas las slides
     @MainActor
     private func exportarTodasLasSlides() {
         exportando = true
@@ -169,7 +158,6 @@ struct RecapContenedorView: View {
 // MARK: - ShareSheet UIKit Wrapper
 struct ShareSheetView: UIViewControllerRepresentable {
     let items: [Any]
-    
     func makeUIViewController(context: Context) -> UIActivityViewController {
         UIActivityViewController(activityItems: items, applicationActivities: nil)
     }
