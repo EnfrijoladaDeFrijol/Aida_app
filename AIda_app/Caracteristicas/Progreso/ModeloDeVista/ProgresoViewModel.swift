@@ -75,4 +75,26 @@ class ProgresoViewModel: ObservableObject {
     func colorParaVariacion(_ esMejora: Bool) -> Color {
         return esMejora ? .aidaVerde : .aidaRojo
     }
+    
+    var deporteFavorito: (nombre: String, icono: String, color: Color, mensaje: String) {
+        guard let actual = mesActual else { return ("Ninguno", "questionmark", .gray, "Registra actividad para ver tu favorito") }
+        
+        var puntajes: [String: Double] = [:]
+        puntajes["Natación"] = actual.metrosTotales > 0 ? (actual.metrosTotales / 1000.0) * 10 : 0
+        puntajes["Running"] = actual.kmTotales > 0 ? actual.kmTotales * 5 : 0
+        puntajes["Gimnasio"] = actual.tonelajeTotal > 0 ? (actual.tonelajeTotal / 1000.0) * 5 : 0
+        
+        let favorito = puntajes.max(by: { $0.value < $1.value })
+        
+        if favorito?.value == 0 || favorito == nil {
+            return ("Empezando...", "figure.walk", .aidaNaranja, "¡A movernos este mes!")
+        }
+        
+        switch favorito?.key {
+        case "Natación": return ("Natación", "figure.pool.swim", .aidaAzul, "¡Eres como un pez en el agua!")
+        case "Running": return ("Running", "figure.run", .greenMint, "¡Imparable en la pista!")
+        case "Gimnasio": return ("Gimnasio", "dumbbell.fill", .magentaProfundo, "¡Levantando pesado este mes!")
+        default: return ("Activo", "flame.fill", .aidaAcento, "¡Sigue así!")
+        }
+    }
 }

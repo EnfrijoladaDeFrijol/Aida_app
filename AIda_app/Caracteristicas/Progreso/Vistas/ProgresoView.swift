@@ -6,78 +6,80 @@ struct ProgresoView: View {
     @StateObject private var viewModel = ProgresoViewModel()
     @Environment(\.modelContext) private var context
     
+    let columnas = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
+    
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     if let actual = viewModel.mesActual {
-                        let anterior = viewModel.mesesAnteriores.first
+                        let historial = Array(viewModel.mesesAnteriores.prefix(3).reversed()) + [actual]
                         
-                        // Tarjeta: Pasos Totales
-                        TarjetaMetrica(
-                            titulo: "Pasos Totales",
-                            valor: "\(actual.pasosTotales)",
-                            unidad: "pasos",
-                            icono: "shoeprints.fill",
-                            valorAnterior: Double(anterior?.pasosTotales ?? 0),
-                            valorActual: Double(actual.pasosTotales),
-                            viewModel: viewModel
-                        )
+                        // --- 1. Deporte Favorito ---
+                        SeccionDeporteFavorito(viewModel: viewModel)
                         
-                        // Tarjeta: Distancia Running
-                        TarjetaMetrica(
-                            titulo: "Distancia Recorrida",
-                            valor: String(format: "%.1f", actual.kmTotales),
-                            unidad: "km",
-                            icono: "figure.run",
-                            valorAnterior: anterior?.kmTotales ?? 0,
-                            valorActual: actual.kmTotales,
-                            viewModel: viewModel
-                        )
-                        
-                        // Gráfica Comparativa (Últimos 3 Meses + Actual)
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Comparativa de Distancia (Últimos Meses)")
+                        // --- 2. Natación (2 Gráficas) ---
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("🏊‍♂️ Natación")
                                 .font(.aidaSubtitulo)
                                 .foregroundColor(.aidaTextoPrincipal)
                             
-                            Chart {
-                                // Historial
-                                let ultimos = Array(viewModel.mesesAnteriores.prefix(3).reversed())
-                                ForEach(ultimos) { registro in
-                                    BarMark(
-                                        x: .value("Mes", formatearMes(registro.mes)),
-                                        y: .value("Kilómetros", registro.kmTotales)
-                                    )
-                                    .foregroundStyle(Color.aidaAcento.opacity(0.6))
-                                }
-                                
-                                // Mes Actual
-                                BarMark(
-                                    x: .value("Mes", "Actual"),
-                                    y: .value("Kilómetros", actual.kmTotales)
+                            LazyVGrid(columns: columnas, spacing: 16) {
+                                MiniGraficaView(
+                                    titulo: "Metros",
+                                    color: .aidaAzul,
+                                    data: historial.map { (formatearMes($0.mes), $0.metrosTotales) }
                                 )
-                                .foregroundStyle(Color.aidaAcento)
+                                MiniGraficaView(
+                                    titulo: "Sesiones",
+                                    color: .cyan,
+                                    data: historial.map { (formatearMes($0.mes), Double($0.sesionesNado)) }
+                                )
                             }
-                            .frame(height: 180)
                         }
-                        .padding(20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                .fill(Color.aidaSuperficie)
-                                .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
-                        )
                         
-                        // Tarjeta: Gimnasio
-                        TarjetaMetrica(
-                            titulo: "Tonelaje Levantado",
-                            valor: String(format: "%.0f", actual.tonelajeTotal),
-                            unidad: "kg",
-                            icono: "dumbbell.fill",
-                            valorAnterior: anterior?.tonelajeTotal ?? 0,
-                            valorActual: actual.tonelajeTotal,
-                            viewModel: viewModel
-                        )
+                        // --- 3. Running (2 Gráficas) ---
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("🏃‍♂️ Running & Lifestyle")
+                                .font(.aidaSubtitulo)
+                                .foregroundColor(.aidaTextoPrincipal)
+                            
+                            LazyVGrid(columns: columnas, spacing: 16) {
+                                MiniGraficaView(
+                                    titulo: "Kilómetros",
+                                    color: .greenMint,
+                                    data: historial.map { (formatearMes($0.mes), $0.kmTotales) }
+                                )
+                                MiniGraficaView(
+                                    titulo: "Pasos",
+                                    color: .aidaVerde,
+                                    data: historial.map { (formatearMes($0.mes), Double($0.pasosTotales)) }
+                                )
+                            }
+                        }
+                        
+                        // --- 4. Gimnasio (2 Gráficas) ---
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("🏋️‍♂️ Gimnasio")
+                                .font(.aidaSubtitulo)
+                                .foregroundColor(.aidaTextoPrincipal)
+                            
+                            LazyVGrid(columns: columnas, spacing: 16) {
+                                MiniGraficaView(
+                                    titulo: "Tonelaje (kg)",
+                                    color: .magentaProfundo,
+                                    data: historial.map { (formatearMes($0.mes), $0.tonelajeTotal) }
+                                )
+                                MiniGraficaView(
+                                    titulo: "Calorías Activas",
+                                    color: .aidaNaranja,
+                                    data: historial.map { (formatearMes($0.mes), $0.caloriasActivas) }
+                                )
+                            }
+                        }
                         
                     } else {
                         ProgressView("Cargando tu progreso...")
@@ -114,59 +116,107 @@ struct ProgresoView: View {
     }
 }
 
-struct TarjetaMetrica: View {
-    let titulo: String
-    let valor: String
-    let unidad: String
-    let icono: String
-    let valorAnterior: Double
-    let valorActual: Double
-    let viewModel: ProgresoViewModel
+// MARK: - Componentes de UI
+
+struct SeccionDeporteFavorito: View {
+    @ObservedObject var viewModel: ProgresoViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icono)
-                    .font(.title2)
-                    .foregroundColor(.aidaAcento)
+        let fav = viewModel.deporteFavorito
+        
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(fav.color.opacity(0.15))
+                    .frame(width: 60, height: 60)
                 
-                Text(titulo)
-                    .font(.aidaSubtitulo)
-                    .foregroundColor(.aidaTextoPrincipal)
-                
-                Spacer()
+                Image(systemName: fav.icono)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(fav.color)
             }
             
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(valor)
-                    .font(.aidaMetricaGigante)
-                    .foregroundColor(.aidaTextoPrincipal)
-                
-                Text(unidad)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Deporte Favorito")
                     .font(.aidaCuerpoDestacado)
                     .foregroundColor(.aidaTextoSecundario)
-            }
-            
-            let variacion = viewModel.calcularVariacion(actual: valorActual, anterior: valorAnterior)
-            
-            if valorAnterior > 0 {
-                HStack(spacing: 4) {
-                    Image(systemName: variacion.esMejora ? "arrow.up.right" : "arrow.down.right")
-                    Text(String(format: "%.1f%%", variacion.porcentaje) + " vs mes pasado")
-                        .font(.aidaCuerpo)
-                }
-                .foregroundColor(viewModel.colorParaVariacion(variacion.esMejora))
-            } else {
-                Text("Primer mes de registro 🚀")
+                
+                Text(fav.nombre)
+                    .font(.aidaMetricaGigante)
+                    .foregroundColor(.aidaTextoPrincipal)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                
+                Text(fav.mensaje)
                     .font(.aidaCuerpo)
-                    .foregroundColor(.aidaTextoSecundario)
+                    .foregroundColor(fav.color)
             }
+            Spacer()
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color.aidaSuperficie)
-                .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 5)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(fav.color.opacity(0.3), lineWidth: 2)
+                )
+                .shadow(color: fav.color.opacity(0.1), radius: 15, x: 0, y: 8)
+        )
+    }
+}
+
+struct MiniGraficaView: View {
+    let titulo: String
+    let color: Color
+    let data: [(String, Double)]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(titulo)
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundColor(.aidaTextoPrincipal)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            
+            let maximo = data.map { $0.1 }.max() ?? 1
+            let limiteY = maximo == 0 ? 1 : maximo
+            
+            Chart {
+                ForEach(data, id: \.0) { item in
+                    BarMark(
+                        x: .value("Mes", item.0),
+                        y: .value("Valor", item.1)
+                    )
+                    .foregroundStyle(color.gradient)
+                    .cornerRadius(4)
+                }
+            }
+            .chartXAxis {
+                AxisMarks(position: .bottom) { value in
+                    AxisValueLabel()
+                        .font(.system(size: 10, weight: .semibold))
+                }
+            }
+            .chartYAxis(.hidden)
+            .chartYScale(domain: 0...limiteY * 1.1)
+            .frame(height: 100)
+            
+            // Valor actual abajo
+            if let valorActual = data.last?.1 {
+                let formateado = valorActual > 1000 && titulo != "Metros" && titulo != "Pasos" && titulo != "Calorías Activas" 
+                    ? String(format: "%.1fk", valorActual / 1000) 
+                    : (titulo == "Sesiones" ? String(format: "%.0f", valorActual) : String(format: "%.1f", valorActual))
+                
+                Text(formateado)
+                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .foregroundColor(color)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.aidaSuperficie)
+                .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
         )
     }
 }
